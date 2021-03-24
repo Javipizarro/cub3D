@@ -6,7 +6,7 @@
 /*   By: jpizarro <jpizarro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 20:07:11 by jpizarro          #+#    #+#             */
-/*   Updated: 2021/03/20 17:29:21 by jpizarro         ###   ########.fr       */
+/*   Updated: 2021/03/24 09:52:43 by jpizarro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,298 @@
 //	trgb = 0x00ff2266;
 //	printf("trgb is: %x\nopp is : %x\n", trgb, get_opp(trgb));
 //	printf("trgb is: %x\n", trgb);
+//
+//	return (0);
+//}
+
+// Sending motion images to the window
+
+typedef struct s_img
+{
+	void		*ptr;
+	char		*addr;
+	int			bpp;
+	int			lnlen;
+	int			endian;
+}			t_img;
+
+typedef struct s_vars
+{
+	void		*mlx_ptr;
+	void		*win_ptr;
+	t_img		img;
+	int			x_dim;
+	int			y_dim;
+	unsigned	color;
+}			t_vars;
+
+typedef struct s_square
+{
+	int			x0;
+	int			x1;
+	int			y0;
+	int			y1;
+}			t_square;
+
+int	press_key(int key_code, t_vars *vars);
+//int	release_key(int key_code, t_vars *vars);
+int	window_area(int key_code, t_vars *vars);
+int	square_paint(t_square sq, t_vars *vars);
+void	pixel_push(t_vars *vars, int x, int y);
+
+
+int	press_key(int key_code, t_vars *vars)
+{
+//	printf("Hello from press_key\n");
+//	printf("key_code = %i\n", key_code);
+//	printf("color: %u\n", vars->color);
+//	printf("win_ptr = %p\n", vars->win_ptr);
+
+	if (key_code == 53)
+		mlx_destroy_window(vars->mlx_ptr, vars->win_ptr);
+	else if (key_code == 13)
+		vars->color = 0x00ffffff;
+	else if (key_code == 15)
+		vars->color = 0x00ff0000;
+	else if (key_code == 5)
+		vars->color = 0x0000ff00;
+	else if (key_code == 11)
+		vars->color = 0x000000ff;
+	else if (key_code == 8)
+		vars->color = 0x0000ffff;
+	else if (key_code == 46)
+		vars->color = 0x00ff00ff;
+	else if (key_code == 16)
+		vars->color = 0x00ffff00;
+	else if (key_code == 40)
+		vars->color = 0x00000000;
+	else if ((key_code <= 126 && key_code >= 123) || key_code == 49)
+		window_area(key_code, vars);
+	return (0);
+}
+
+//int	release_key(int key_code, t_vars *vars)
+//{
+//	printf("Hello from release_key\n");
+//	printf("key_code = %i\n", key_code);
+//	printf("Color changed to %x\n", vars->color);
+//	return (0);
+//}
+
+//int	window_area(int key_code, t_vars vars)
+//{
+//	t_square area;
+//
+//	area.x0 = 0;
+//	area.x1 = vars.x_dim;
+//	area.y0 = 0;
+//	area.y1 = vars.y_dim;
+//	if (key_code == 126)
+//		area.y1 = vars.y_dim / 2;
+//	else if (key_code == 125)
+//		area.y0 = vars.y_dim / 2;
+//	else if (key_code == 123)
+//		area.x1 = vars.x_dim/ 2;
+//	else if (key_code == 124)
+//		area.x0 = vars.x_dim / 2;
+//	square_paint(area, vars);
+//	return (0);
+//}
+
+int	window_area(int key_code, t_vars *vars)
+{
+//	printf("Hello from window_area\n");
+
+	t_square area;
+
+	area.x0 = 0 +  (vars->x_dim / 2) * (key_code == 124);
+	area.x1 = vars->x_dim / (1 + (key_code == 123));
+	area.y0 = 0 +  (vars->y_dim / 2) * (key_code == 125);
+	area.y1 = vars->y_dim / (1 + (key_code == 126));
+
+//	printf("x0 = %i, x1 = %i, y0 = %i, y1 = %i\n", area.x0, area.x1, area.y0, area.y1);
+
+
+	square_paint(area, vars);
+	return (0);
+}
+
+int square_paint(t_square sq, t_vars *vars)
+{
+//	printf("Hello form square_paint\n");
+
+	int i;
+	int j;
+
+	j = sq.y0;
+	while (j < sq.y1)
+	{
+		i = sq.x0;
+		while (i < sq.x1)
+		{
+			pixel_push(vars, i, j);
+			i++;
+		}
+		j++;
+	}
+	mlx_put_image_to_window(vars->mlx_ptr, vars->win_ptr, vars->img.ptr, 0, 0);
+	return (0);
+}
+
+void	pixel_push(t_vars *vars, int x, int y)
+{
+	char	*dst;
+
+	dst = vars->img.addr + (y * vars->img.lnlen + x * (vars->img.bpp / 8));
+	*(unsigned int*)dst = vars->color;
+}
+
+int		main(void)
+{
+	t_vars	vars;
+	t_img	img;
+
+	vars.x_dim = 800;
+	vars.y_dim = 600;
+	vars.color = 0;
+	vars.mlx_ptr = mlx_init();
+	vars.win_ptr = mlx_new_window(vars.mlx_ptr, vars.x_dim, vars.y_dim, "Movement");
+	mlx_hook(vars.win_ptr, 2, 1L<<0, press_key, &vars);
+//	mlx_hook(vars.win_ptr, 3, 1L<<1, release_key, &vars);
+
+	img.ptr = mlx_new_image(vars.mlx_ptr, vars.x_dim, vars.y_dim);
+	img.addr = mlx_get_data_addr(img.ptr, &img.bpp, &img.lnlen, &img.endian);
+	vars.img = img;
+
+	//printf("lnlen = %i\n", img.lnlen);
+	//pixel_push(&img, 0, 0, 0x00FF0000);
+	//mlx_put_image_to_window(vars.mlx_ptr, vars.win_ptr, img.ptr, 0, 0);
+
+
+	mlx_loop(vars.mlx_ptr);
+
+	return (0);
+}
+
+//// Sending static images to the window
+//// Choose the color to send (rgb cmyk w) with the letter key, and press a direction arrow or space key to send it.
+//
+//typedef struct s_img
+//{
+//	void		*ptr;
+//	char		*addr;
+//	int			bpp;
+//	int			lnlen;
+//	int			endian;
+//}			t_img;
+//
+//typedef struct s_vars
+//{
+//	void		*mlx_ptr;
+//	void		*win_ptr;
+//	t_img		img;
+//	int			x_dim;
+//	int			y_dim;
+//	unsigned	color;
+//}			t_vars;
+//
+//typedef struct s_square
+//{
+//	int			x0;
+//	int			x1;
+//	int			y0;
+//	int			y1;
+//}			t_square;
+//
+//int	press_key(int key_code, t_vars *vars);
+//int	window_area(int key_code, t_vars *vars);
+//int	square_paint(t_square sq, t_vars *vars);
+//void	pixel_push(t_vars *vars, int x, int y);
+//
+//
+//int	press_key(int key_code, t_vars *vars)
+//{
+//	if (key_code == 53)
+//		mlx_destroy_window(vars->mlx_ptr, vars->win_ptr);
+//	else if (key_code == 13)
+//		vars->color = 0x00ffffff;
+//	else if (key_code == 15)
+//		vars->color = 0x00ff0000;
+//	else if (key_code == 5)
+//		vars->color = 0x0000ff00;
+//	else if (key_code == 11)
+//		vars->color = 0x000000ff;
+//	else if (key_code == 8)
+//		vars->color = 0x0000ffff;
+//	else if (key_code == 46)
+//		vars->color = 0x00ff00ff;
+//	else if (key_code == 16)
+//		vars->color = 0x00ffff00;
+//	else if (key_code == 40)
+//		vars->color = 0x00000000;
+//	else if ((key_code <= 126 && key_code >= 123) || key_code == 49)
+//		window_area(key_code, vars);
+//	return (0);
+//}
+//
+//
+//int	window_area(int key_code, t_vars *vars)
+//{
+//	t_square area;
+//
+//	area.x0 = 0 +  (vars->x_dim / 2) * (key_code == 124);
+//	area.x1 = vars->x_dim / (1 + (key_code == 123));
+//	area.y0 = 0 +  (vars->y_dim / 2) * (key_code == 125);
+//	area.y1 = vars->y_dim / (1 + (key_code == 126));
+//	square_paint(area, vars);
+//	return (0);
+//}
+//
+//int square_paint(t_square sq, t_vars *vars)
+//{
+//	int i;
+//	int j;
+//
+//	j = sq.y0;
+//	while (j < sq.y1)
+//	{
+//		i = sq.x0;
+//		while (i < sq.x1)
+//		{
+//			pixel_push(vars, i, j);
+//			i++;
+//		}
+//		j++;
+//	}
+//	mlx_put_image_to_window(vars->mlx_ptr, vars->win_ptr, vars->img.ptr, 0, 0);
+//	return (0);
+//}
+//
+//void	pixel_push(t_vars *vars, int x, int y)
+//{
+//	char	*dst;
+//
+//	dst = vars->img.addr + (y * vars->img.lnlen + x * (vars->img.bpp / 8));
+//	*(unsigned int*)dst = vars->color;
+//}
+//
+//int		main(void)
+//{
+//	t_vars	vars;
+//	t_img	img;
+//
+//	vars.x_dim = 800;
+//	vars.y_dim = 600;
+//	vars.color = 0;
+//	vars.mlx_ptr = mlx_init();
+//	vars.win_ptr = mlx_new_window(vars.mlx_ptr, vars.x_dim, vars.y_dim, "Movement");
+//	mlx_hook(vars.win_ptr, 2, 1L<<0, press_key, &vars);
+//
+//	img.ptr = mlx_new_image(vars.mlx_ptr, vars.x_dim, vars.y_dim);
+//	img.addr = mlx_get_data_addr(img.ptr, &img.bpp, &img.lnlen, &img.endian);
+//	vars.img = img;
+//
+//	mlx_loop(vars.mlx_ptr);
 //
 //	return (0);
 //}
@@ -72,76 +364,144 @@
 //}
 
 
-// Hook
-
-typedef struct s_vars
-{
-	void	*mlx_ptr;
-	void	*win_ptr;
-}			t_vars;
-
-int		key_hook(int keycode, t_vars *vars)
-{
-	printf("Hello from key_hook!\n");
-	printf("Keycode = %i\n", keycode);
-	printf("win_ptr = %p\n", vars->win_ptr);
-	return (0);
-}
-
-int	mouse_click_hook(int button, int posx, int posy, t_vars *vars)
-{
-	printf("Hello from mouse_hook!\n");
-	printf("button = %i\n", button);
-	printf("posx = %i\n", posx);
-	printf("posy = %i\n", posy);
-	printf("win_ptr = %p\n", vars->win_ptr);
-	return (0);
-}
-
-int event_hook(int info1, int info2, int info3, int info4, t_vars *vars)
-{
-	printf("Hello from event_hook\n");
-	printf("info1 = %i\n", info1);
-	printf("info2 = %i\n", info2);
-	printf("info3 = %i\n", info3);
-	printf("info4 = %i\n", info4);
-	printf("win_ptr = %p\n", vars->win_ptr);
-	return (0);
-}
-
-int release_key_hook(int info1, int info2, t_vars *vars)
-{
-	printf("Hello from release_key_hook\n");
-	printf("info1 = %i\n", info1);
-	printf("info2 = %i\n", info2);
-	printf("win_ptr = %p\n", vars->win_ptr);
-	return (0);
-}
-
-int press_key_hook(int info1, int info2, t_vars *vars)
-{
-	printf("Hello from press_key_hook\n");
-	printf("info1 = %i\n", info1);
-	printf("info2 = %i\n", info2);
-	printf("win_ptr = %p\n", vars->win_ptr);
-	return (0);
-}
-
-int		main(void)
-{
-	t_vars	vars;
-
-	vars.mlx_ptr = mlx_init();
-	vars.win_ptr = mlx_new_window(vars.mlx_ptr, 800, 600, "Hooks");
-	mlx_key_hook(vars.win_ptr, key_hook, &vars);
-	mlx_mouse_hook(vars.win_ptr, mouse_click_hook, &vars);
-//	mlx_hook(vars.win_ptr, 5, 1L<<3, event_hook, &vars);
-//	mlx_hook(vars.win_ptr, 3, 1L<<1, release_key_hook, &vars);
-//	mlx_hook(vars.win_ptr, 2, 1L<<0, press_key_hook, &vars);
-	mlx_loop(vars.mlx_ptr);
-
-	return (0);
-}
+//// Hook
+//
+//typedef struct s_vars
+//{
+//	void	*mlx_ptr;
+//	void	*win_ptr;
+//}			t_vars;
+//
+//int destroy_notify(int info1, t_vars *vars);
+//
+//int		key_hook(int keycode, t_vars *vars)
+//{
+//	printf("Hello from key_hook!\n");
+//	printf("Keycode = %i\n", keycode);
+//	printf("win_ptr = %p\n", vars->win_ptr);
+//	return (0);
+//}
+//
+//int	mouse_click_hook(int button, int posx, int posy, t_vars *vars)
+//{
+//	printf("Hello from mouse_hook!\n");
+//	printf("button = %i\n", button);
+//	printf("posx = %i\n", posx);
+//	printf("posy = %i\n", posy);
+//	printf("win_ptr = %p\n", vars->win_ptr);
+//	return (0);
+//}
+//
+//int press_key(int key_code, int info2, t_vars *vars)
+//{
+//	printf("Hello from press_key\n");
+//	printf("key_code = %i\n", key_code);
+//	printf("info2 = %i\n", info2);
+//	printf("win_ptr = %p\n", vars->win_ptr);
+//	if (key_code == 53)
+//		{
+//			destroy_notify(key_code, vars);
+//			mlx_destroy_window(vars->mlx_ptr, vars->win_ptr);
+//		}
+//	return (0);
+//}
+//
+//int release_key(int key_code, int info2, t_vars *vars)
+//{
+//	printf("Hello from release_key\n");
+//	printf("key_code = %i\n", key_code);
+//	printf("info2 = %i\n", info2);
+//	printf("win_ptr = %p\n", vars->win_ptr);
+//	return (0);
+//}
+//
+//int button_press(int button_code, int pos_x, int pos_y, int info4, //t_vars *vars)
+//{
+//	printf("Hello from button_press\n");
+//	printf("button_code = %i\n", button_code);
+//	printf("pos_x = %i\n", pos_x);
+//	printf("pos_y = %i\n", pos_y);
+//	printf("info4 = %i\n", info4);
+//	printf("win_ptr = %p\n", vars->win_ptr);
+//	return (0);
+//}
+//int button_release(int button_code, int pos_x, int pos_y, int //info4, t_vars *vars)
+//{
+//	printf("Hello from button_release\n");
+//	printf("button_code = %i\n", button_code);
+//	printf("pos_x = %i\n", pos_x);
+//	printf("pos_y = %i\n", pos_y);
+//	printf("info4 = %i\n", info4);
+//	printf("win_ptr = %p\n", vars->win_ptr);
+//	return (0);
+//}
+//
+//int motion_notify(int pos_x, int pos_y, int info3, t_vars *vars)
+//{
+//	printf("Hello from motion_notify\n");
+//	printf("pos_x = %i\n", pos_x);
+//	printf("pos_y = %i\n", pos_y);
+//	printf("info4 = %i\n", info3);
+//	printf("win_ptr = %p\n", vars->win_ptr);
+//	return (0);
+//}
+//
+//int destroy_notify(int key_code, t_vars *vars)
+//{
+//	printf("Hello from destroy_notify\n");
+//	printf("key_code = %i\n", key_code);
+//	printf("win_ptr = %p\n", vars->win_ptr);
+//	return (0);
+//}
+//
+//int enter_window(int pos_x, int pos_y, t_vars *vars)
+//{
+//	printf("Hello from enter_window\n");
+//	printf("pos_x = %i\n", pos_x);
+//	printf("pos_y = %i\n", pos_y);
+//	printf("win_ptr = %p\n", vars->win_ptr);
+//	return (0);
+//}
+//
+//int exit_window(int pos_x, int pos_y, t_vars *vars)
+//{
+//	printf("Hello from exit_window\n");
+//	printf("pos_x = %i\n", pos_x);
+//	printf("pos_y = %i\n", pos_y);
+//	printf("win_ptr = %p\n", vars->win_ptr);
+//	return (0);
+//}
+//
+//int	trying_expose(int info1, int info2, t_vars *vars)
+//{
+//	printf("Hello from trying_expose\n");
+//	printf("pos_x = %i\n", info1);
+//	printf("pos_y = %i\n", info2);
+//	printf("win_ptr = %p\n", vars->win_ptr);
+//	return (0);
+//}
+//
+//int		main(void)
+//{
+//	t_vars	vars;
+//
+//	vars.mlx_ptr = mlx_init();
+//	vars.win_ptr = mlx_new_window(vars.mlx_ptr, 800, 600, "Hooks");
+////	mlx_key_hook(vars.win_ptr, key_hook, &vars);
+////	mlx_mouse_hook(vars.win_ptr, mouse_click_hook, &vars);
+//	mlx_expose_hook (vars.win_ptr, trying_expose,  &vars);
+////	mlx_hook(vars.win_ptr, 2, 1L<<0, press_key, &vars);
+////	mlx_hook(vars.win_ptr, 3, 1L<<1, release_key, &vars);
+////	mlx_hook(vars.win_ptr, 4, 1L<<2, button_press, &vars);
+////	mlx_hook(vars.win_ptr, 5, 1L<<3, button_release, &vars);
+////	mlx_hook(vars.win_ptr, 6, 1L<<6, motion_notify, &vars);
+////	mlx_hook(vars.win_ptr, 17, 0L, destroy_notify, &vars);
+//	mlx_hook(vars.win_ptr, 7, 1L<<4, enter_window, &vars);
+//	mlx_hook(vars.win_ptr, 8, 1L<<5, exit_window, &vars);
+//	mlx_loop(vars.mlx_ptr);
+//
+//	return (0);
+//}
 
 //// Aquí programa completo para pintar en pantalla un pixel
 //
