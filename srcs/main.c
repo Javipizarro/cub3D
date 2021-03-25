@@ -6,7 +6,7 @@
 /*   By: jpizarro <jpizarro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 20:07:11 by jpizarro          #+#    #+#             */
-/*   Updated: 2021/03/24 09:52:43 by jpizarro         ###   ########.fr       */
+/*   Updated: 2021/03/25 13:13:31 by jpizarro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,9 @@ typedef struct s_vars
 {
 	void		*mlx_ptr;
 	void		*win_ptr;
-	t_img		img;
+	t_img		img1;
+	t_img		img2;
+	int			img;
 	int			x_dim;
 	int			y_dim;
 	unsigned	color;
@@ -77,21 +79,21 @@ int	press_key(int key_code, t_vars *vars)
 
 	if (key_code == 53)
 		mlx_destroy_window(vars->mlx_ptr, vars->win_ptr);
-	else if (key_code == 13)
+	else if (key_code == 28)
 		vars->color = 0x00ffffff;
-	else if (key_code == 15)
+	else if (key_code == 18)
 		vars->color = 0x00ff0000;
-	else if (key_code == 5)
+	else if (key_code == 19)
 		vars->color = 0x0000ff00;
-	else if (key_code == 11)
+	else if (key_code == 20)
 		vars->color = 0x000000ff;
-	else if (key_code == 8)
+	else if (key_code == 21)
 		vars->color = 0x0000ffff;
-	else if (key_code == 46)
+	else if (key_code == 23)
 		vars->color = 0x00ff00ff;
-	else if (key_code == 16)
+	else if (key_code == 22)
 		vars->color = 0x00ffff00;
-	else if (key_code == 40)
+	else if (key_code == 26)
 		vars->color = 0x00000000;
 	else if ((key_code <= 126 && key_code >= 123) || key_code == 49)
 		window_area(key_code, vars);
@@ -162,7 +164,7 @@ int square_paint(t_square sq, t_vars *vars)
 		}
 		j++;
 	}
-	mlx_put_image_to_window(vars->mlx_ptr, vars->win_ptr, vars->img.ptr, 0, 0);
+//	mlx_put_image_to_window(vars->mlx_ptr, vars->win_ptr, vars->img.ptr, 0, 0);
 	return (0);
 }
 
@@ -170,14 +172,125 @@ void	pixel_push(t_vars *vars, int x, int y)
 {
 	char	*dst;
 
-	dst = vars->img.addr + (y * vars->img.lnlen + x * (vars->img.bpp / 8));
-	*(unsigned int*)dst = vars->color;
+	if (vars->img == 1)
+	{
+		dst = vars->img1.addr + (y * vars->img1.lnlen + x * (vars->img1.bpp / 8));
+		*(unsigned int*)dst = vars->color;
+	}
+	else if (vars->img == 2)
+	{
+		dst = vars->img2.addr + (y * vars->img2.lnlen + x * (vars->img2.bpp / 8));
+		*(unsigned int*)dst = vars->color;
+	}
 }
+
+void	copy_img(t_vars *vars)
+{
+	char	*dst;
+	int		x;
+	int		y;
+
+	y = 0;
+	while (y < vars->y_dim)
+	{
+		x = 0;
+		while (x < vars->x_dim)
+		{
+			dst = vars->img2.addr + (y * vars->img2.lnlen + x * (vars->img2.bpp / 8));
+			*(unsigned int*)dst = *(unsigned int*)(vars->img1.addr + (y * vars->img1.lnlen + x * (vars->img1.bpp / 8)));
+			x++;
+		}
+		y++;
+	}
+}
+
+int	no_event(t_vars *vars)
+{
+//	static int i = 0;
+//	printf("Hello form no_event step %i\n", i++);
+	if (vars->img == 1)
+		mlx_put_image_to_window(vars->mlx_ptr, vars->win_ptr, vars->img1.ptr, 0, 0);
+	else if (vars->img == 2)
+		mlx_put_image_to_window(vars->mlx_ptr, vars->win_ptr, vars->img2.ptr, 0, 0);
+
+	return (0);
+}
+
+int press_button(int button_code, int x, int y, t_vars *vars)
+{
+	t_square	sq;
+	int size;
+
+	printf("mlx_ptr = %p\n", vars->mlx_ptr);
+	printf("win_ptr = %p\n", vars->win_ptr);
+	printf("img1 = %p\n", vars->img1.ptr);
+	printf("img2 = %p\n", vars->img2.ptr);
+	//	Just for using the variables:
+	size = button_code + x + y + vars->color;
+	vars->img = 2;
+	copy_img(vars);
+	size = 24;
+	sq.x0 = x - size / 2;
+	sq.x1 = sq.x0 + size;
+	sq.y0 = y - size / 2;
+	sq.y1 = sq.y0 + size;
+	square_paint(sq, vars);
+	return (0);
+}
+
+int move_mouse(int x, int y, t_vars *vars)
+{
+//	printf("working on image %i\n", vars->img);
+//	printf("image 1 prt: %p", vars->img1.ptr);
+//	printf("image 2 prt: %p", vars->img2.ptr);
+	
+	t_square	sq;
+	int			size;
+
+	if (vars->img == 2)
+	{
+		copy_img(vars);
+		size = 24;
+		sq.x0 = x - size / 2;
+		sq.x1 = sq.x0 + size;
+		sq.y0 = y - size / 2;
+		sq.y1 = sq.y0 + size;
+		square_paint(sq, vars);
+	}
+	return (0);
+}
+
+int release_button(int button_code, int x, int y, t_vars *vars)
+{
+	t_square	sq;
+	int			size;
+
+	vars->img = 1;
+	size = 24 * button_code;
+	sq.x0 = x - size / 2;
+	sq.x1 = sq.x0 + size;
+	sq.y0 = y - size / 2;
+	sq.y1 = sq.y0 + size;
+	square_paint(sq, vars);
+	copy_img(vars);
+
+	return (0);
+}
+
+//int	prueba(int info1, int info2, t_vars *vars)
+//{
+//	printf("EVENT HOOKED!!!!!!");
+//	printf("info1 = %x\n", info1);
+//	printf("info2 = %x\n", info2);
+//	printf("%p", vars);
+//	return (0);
+//}
 
 int		main(void)
 {
 	t_vars	vars;
-	t_img	img;
+	t_img	img1;
+	t_img	img2;
 
 	vars.x_dim = 800;
 	vars.y_dim = 600;
@@ -185,17 +298,25 @@ int		main(void)
 	vars.mlx_ptr = mlx_init();
 	vars.win_ptr = mlx_new_window(vars.mlx_ptr, vars.x_dim, vars.y_dim, "Movement");
 	mlx_hook(vars.win_ptr, 2, 1L<<0, press_key, &vars);
+	mlx_hook(vars.win_ptr, 4, 0L, press_button, &vars);
+	mlx_hook(vars.win_ptr, 6, 0L, move_mouse, &vars);
+	mlx_hook(vars.win_ptr, 5, 0L, release_button, &vars);
 //	mlx_hook(vars.win_ptr, 3, 1L<<1, release_key, &vars);
+//	mlx_hook(vars.win_ptr, 17, 0L, prueba, &vars);
 
-	img.ptr = mlx_new_image(vars.mlx_ptr, vars.x_dim, vars.y_dim);
-	img.addr = mlx_get_data_addr(img.ptr, &img.bpp, &img.lnlen, &img.endian);
-	vars.img = img;
+	img1.ptr = mlx_new_image(vars.mlx_ptr, vars.x_dim, vars.y_dim);
+	img1.addr = mlx_get_data_addr(img1.ptr, &img1.bpp, &img1.lnlen, &img1.endian);
+	img2.ptr = mlx_new_image(vars.mlx_ptr, vars.x_dim, vars.y_dim);
+	img2.addr = mlx_get_data_addr(img2.ptr, &img2.bpp, &img2.lnlen, &img2.endian);
+	vars.img1 = img1;
+	vars.img2 = img2;
+	
 
 	//printf("lnlen = %i\n", img.lnlen);
 	//pixel_push(&img, 0, 0, 0x00FF0000);
 	//mlx_put_image_to_window(vars.mlx_ptr, vars.win_ptr, img.ptr, 0, 0);
 
-
+	mlx_loop_hook(vars.mlx_ptr, no_event, &vars);
 	mlx_loop(vars.mlx_ptr);
 
 	return (0);
