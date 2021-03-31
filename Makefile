@@ -6,11 +6,11 @@
 #    By: jpizarro <jpizarro@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/03/19 11:24:00 by jpizarro          #+#    #+#              #
-#    Updated: 2021/03/20 11:50:28 by jpizarro         ###   ########.fr        #
+#    Updated: 2021/03/26 18:35:38 by jpizarro         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-.PHONY: all clean fclean re run
+.PHONY: all clean fclean re run debug
 
 NAME = cub3D
 
@@ -59,14 +59,19 @@ clean:
 
 
 fclean: clean
-	@echo "and $(NAME)"
-	@$(RM) $(NAME)
+	@echo "also $(NAME) and debug files"
+	@$(RM) $(NAME) debug
 	@cd $(LIBFOLDERS) && $(MAKE) $@
 
 re: fclean all
 
 run: all
 	@./$(NAME)
+
+debug: $(OBJS) $(STATICS)
+	@echo "Creating $@ file"
+	@$(CC) -g $(CFLAGS) $(MLXFLAGS) $(OBJS) $(STATICS) -o $@
+	@echo "$@ is ready!"
 
 show:
 	@echo "SRCS $(SRCS)"

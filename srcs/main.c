@@ -6,7 +6,7 @@
 /*   By: jpizarro <jpizarro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 20:07:11 by jpizarro          #+#    #+#             */
-/*   Updated: 2021/03/25 21:03:27 by jpizarro         ###   ########.fr       */
+/*   Updated: 2021/03/31 17:21:11 by jpizarro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,19 +32,33 @@
 //	return (0);
 //}
 
-//	Sending motion images to the window and managing with the keyboard.
-//	choose a color (1 to 8 keys), and click over the window with the left or right button.
-//	Drag the shape where you want, change its color, move it with the wasd keys.
-//	Press 'e' to keep it or 'q' to erase it.
-//	Adjust it with the WASD keys, and fix it wiht the E.
+//	Reading xpm images from files to the program: the same as the one below, but if you press "U", the program
+//	shows an xpm image that is preloaded in the draw_xpm function. The way to show this image is by parsing it
+//	pixel by pixel, reading the color and painting a pixel on an image that will later be sent to the window.
+//	Another way to do this job is through mlx_put_image_to_window, pushing a second image after the main one, for
+//	each loop; this last one is commented in the no_event function.
+
+typedef struct s_xpm
+{
+	void		*ptr;
+	char		*path;
+	char		*addr;
+	int			x_dim;
+	int			y_dim;
+	int			x_pos;
+	int			y_pos;
+	int			bpp;
+	int			lnlen;
+	int			endian;
+}			t_xpm;
 
 typedef struct s_img
 {
 	void		*ptr;
 	char		*addr;
-	int	bpp;
-	int	lnlen;
-	int	endian;
+	int			bpp;
+	int			lnlen;
+	int			endian;
 }			t_img;
 
 typedef struct s_shape
@@ -52,8 +66,8 @@ typedef struct s_shape
 	char		type;
 	int			x;
 	int			y;
-	int			mov_x;
-	int			mov_y;
+	int			x_mov;
+	int			y_mov;
 	int			size;
 }			t_shape;
 
@@ -65,18 +79,24 @@ typedef struct s_vars
 	t_img		img1;
 	t_shape		shape;
 	char		img;
+	t_xpm		xpm;
 	int			x_dim;
 	int			y_dim;
 	unsigned	color;
+	int			x_pos;
+	int			y_pos;
 }			t_vars;
 
 int	press_key(int key_code, t_vars *vars);
 void	change_color(int key_color, t_vars *vars);
 int	wasdeq(int key_code, t_vars *vars);
+void	draw_xpm(int key_code, t_vars *vars);
+//t_xpm	set_xpm(char *path, int x_dim, int y_dim, t_vars *vars);
 int	release_key(int key_code, t_vars *vars);
 int	window_area(int key_code, t_vars *vars);
 int	square_paint(t_vars *vars);
 int	circle_paint(t_vars *vars);
+int	xpm_paint(t_vars *vars);
 void	fix_shape(t_vars *vars);
 void	erase_shape(t_vars *vars);
 void	pixel_push(t_vars *vars, int x, int y);
@@ -99,27 +119,31 @@ int	press_key(int key_code, t_vars *vars)
 		change_color(key_code, vars);
 	else if ((key_code <= 126 && key_code >= 123) || key_code == 49)
 		window_area(key_code, vars);
+	else if (key_code == 31 || key_code == 32 || key_code == 34 || key_code == 35)
+		draw_xpm(key_code, vars);
+
 	return (0);
 }
 
 void	change_color(int key_code, t_vars *vars)
 {
+//	printf("key_code = %i\n", key_code);
 	if (key_code == 28)
-		vars->color = 0x00ffffff;
+		vars->color = 0x80ffffff;
 	else if (key_code == 18)
-		vars->color = 0x00ff0000;
+		vars->color = 0x80ff0000;
 	else if (key_code == 19)
-		vars->color = 0x0000ff00;
+		vars->color = 0x8000ff00;
 	else if (key_code == 20)
-		vars->color = 0x000000ff;
+		vars->color = 0x800000ff;
 	else if (key_code == 21)
-		vars->color = 0x0000ffff;
+		vars->color = 0x8000ffff;
 	else if (key_code == 23)
-		vars->color = 0x00ff00ff;
+		vars->color = 0x80ff00ff;
 	else if (key_code == 22)
-		vars->color = 0x00ffff00;
+		vars->color = 0x80ffff00;
 	else if (key_code == 26)
-		vars->color = 0x00000000;
+		vars->color = 0x80000000;
 	if (vars->img == 1 || vars->img == 2)
 	{
 		copy_img(vars);
@@ -146,29 +170,70 @@ int	wasdeq(int key_code, t_vars *vars)
 			return (0);
 		}
 		else if (key_code == 13)
-			vars->shape.mov_y = -1;
+			vars->shape.y_mov = -1;
 		else if (key_code == 0)
-			vars->shape.mov_x = -1;
+			vars->shape.x_mov = -1;
 		else if (key_code == 1)
-			vars->shape.mov_y = 1;
+			vars->shape.y_mov = 1;
 		else if (key_code == 2)
-			vars->shape.mov_x = 1;
+			vars->shape.x_mov = 1;
 	}
 	return (0);
 }
+
+void	draw_xpm(int key_code, t_vars *vars)
+{
+	t_xpm	xpm;
+//	int		i;
+//	int		j;
+//	int		dx;
+//	int		dy;
+
+	xpm.ptr = mlx_xpm_file_to_image(vars->mlx_ptr, "./img/xpmwhite.xpm", &xpm.x_dim, &xpm.y_dim);
+//	xpm.ptr = mlx_xpm_file_to_image(vars->mlx_ptr, "./img/enemy.xpm", &xpm.x_dim, &xpm.y_dim);
+	xpm.addr = mlx_get_data_addr(xpm.ptr, &xpm.bpp, &xpm.lnlen, &xpm.endian);
+	vars->xpm = xpm;
+//	printf("xpm.ptr = %p\n", xpm.ptr);
+//	printf("xpm.bpp = %i\n", xpm.bpp);
+//	printf("img0.bpp = %i\n", vars->img0.bpp);
+//	printf("img1.bpp = %i\n", vars->img1.bpp);
+//	printf("xpm.lnlen = %i\n", xpm.lnlen);
+//	printf("xpm.endian = %i\n", xpm.endian);
+//	printf("color 120,120 = %x\n", *(int*)(xpm.ptr + 120 * xpm.lnlen + 120 * xpm.bpp));
+	if (key_code == 32)
+	{
+		vars->img = 1;
+		xpm_paint(vars);
+	}
+//	printf("x_pos = %i\n", vars->x_pos);
+//	printf("y_pos = %i\n", vars->y_pos);
+//	printf("mlx = %p\n", vars->mlx_ptr);
+//	printf("win = %p\n", vars->win_ptr);
+//	printf("xpm = %p\n", xpm.ptr);
+//	mlx_put_image_to_window(vars->mlx_ptr, vars->win_ptr, xpm.ptr, vars->x_pos, vars->y_pos);
+}
+
+//t_xpm	*set_xpm(char *path, int x_dim, int y_dim, t_vars *vars)
+//{
+//	t_xpm		*xpm;
+//
+//	xpm = mlx_xpm_file_to_image(vars->mlx_ptr, path, &x_dim, &y_dim);
+//	xpm.addr = mlx_get_data_addr(xpm.ptr, &xpm.bpp, &xpm.lnlen, &xpm.endian);
+//	return (xpm);
+//}
 
 int	release_key(int key_code, t_vars *vars)
 {
 //	printf("Hello from release_key\n");
 //	printf("key_code = %i\n", key_code);
 	if (key_code == 13)
-		vars->shape.mov_y = 0;
+		vars->shape.y_mov = 0;
 	else if (key_code == 0)
-		vars->shape.mov_x = 0;
+		vars->shape.x_mov = 0;
 	else if (key_code == 1)
-		vars->shape.mov_y = 0;
+		vars->shape.y_mov = 0;
 	else if (key_code == 2)
-		vars->shape.mov_x = 0;
+		vars->shape.x_mov = 0;
 	return (0);
 }
 
@@ -207,8 +272,8 @@ int square_paint(t_vars *vars)
 	int i;
 	int j;
 
-	vars->shape.x += vars->shape.mov_x;
-	vars->shape.y += vars->shape.mov_y;
+	vars->shape.x += vars->shape.x_mov;
+	vars->shape.y += vars->shape.y_mov;
 	j = (vars->shape.y - vars->shape.size / 2) * (vars->shape.y >= vars->shape.size / 2 );
 	while (j < (vars->shape.y + vars->shape.size / 2) && j < vars->y_dim)
 	{
@@ -228,8 +293,8 @@ int circle_paint(t_vars *vars)
 	int i;
 	int j;
 
-	vars->shape.x += vars->shape.mov_x;
-	vars->shape.y += vars->shape.mov_y;
+	vars->shape.x += vars->shape.x_mov;
+	vars->shape.y += vars->shape.y_mov;
 	j = (vars->shape.y - vars->shape.size / 2) * (vars->shape.y >= vars->shape.size / 2 );
 	while (j < (vars->shape.y + vars->shape.size / 2) && j < vars->y_dim)
 	{
@@ -244,6 +309,27 @@ int circle_paint(t_vars *vars)
 	}
 	return (0);
 }
+
+int	xpm_paint(t_vars *vars)
+{
+	int i;
+	int j;
+
+	j = (vars->xpm.y_dim / 2 - vars->y_pos) * (vars->xpm.y_dim / 2 > vars->y_pos);
+	while (j < vars->xpm.y_dim && j < vars->xpm.y_dim / 2 + vars->y_dim - vars->y_pos)
+	{
+		i = (vars->xpm.x_dim / 2 - vars->x_pos) * (vars->xpm.x_dim / 2 > vars->x_pos);
+		while (i < vars->xpm.x_dim && i < vars->xpm.x_dim / 2 + vars->x_dim - vars->x_pos)
+		{
+			vars->color = *(unsigned int*)(vars->xpm.addr + (j * vars->xpm.x_dim + i) * vars->xpm.bpp / 8);
+			pixel_push(vars, i + vars->x_pos - vars->xpm.x_dim / 2, j + vars->y_pos - vars->xpm.y_dim / 2);
+			i++;
+		}
+		j++;
+	}
+	return (0);
+}
+
 
 void	pixel_push(t_vars *vars, int x, int y)
 {
@@ -290,7 +376,7 @@ int	no_event(t_vars *vars)
 //	if (vars->img == 0)
 //		mlx_put_image_to_window(vars->mlx_ptr, vars->win_ptr, vars->img0.ptr, 0, 0);
 //	else if (vars->img == 1 || vars->img == 2)
-	if (vars->img > 0 && (vars->shape.mov_x != 0 || vars->shape.mov_y != 0))
+	if (vars->img > 0 && (vars->shape.x_mov != 0 || vars->shape.y_mov != 0))
 	{
 		copy_img(vars);
 		if (vars->shape.type == 's')
@@ -299,6 +385,7 @@ int	no_event(t_vars *vars)
 			circle_paint(vars);
 	}
 	mlx_put_image_to_window(vars->mlx_ptr, vars->win_ptr, vars->img1.ptr, 0, 0);
+//	mlx_put_image_to_window(vars->mlx_ptr, vars->win_ptr, vars->xpm.ptr, vars->x_pos, vars->y_pos);
 
 	return (0);
 }
@@ -329,6 +416,8 @@ int press_button(int button_code, int x, int y, t_vars *vars)
 
 int move_mouse(int x, int y, t_vars *vars)
 {
+	vars->x_pos = x;
+	vars->y_pos = y;
 	if (vars->img == 1)
 	{
 		copy_img(vars);
@@ -392,8 +481,8 @@ void	shape_init(t_vars *vars)
 	shape.size = 24;
 	shape.x = 0;
 	shape.y = 0;
-	shape.mov_x = 0;
-	shape.mov_y = 0;
+	shape.x_mov = 0;
+	shape.y_mov = 0;
 	vars->shape = shape;
 }
 
@@ -406,7 +495,7 @@ int	main(void)
 	shape_init(&vars);
 	vars.x_dim = 800;
 	vars.y_dim = 600;
-	vars.color = 0;
+	vars.color = 0x00ffff00;
 	vars.img = 0;
 	vars.mlx_ptr = mlx_init();
 	vars.win_ptr = mlx_new_window(vars.mlx_ptr, vars.x_dim, vars.y_dim, "Movement");
@@ -424,15 +513,385 @@ int	main(void)
 	vars.img0 = img0;
 	vars.img1 = img1;
 	
-	//printf("lnlen = %i\n", img.lnlen);
-	//pixel_push(&img, 0, 0, 0x00FF0000);
-	//mlx_put_image_to_window(vars.mlx_ptr, vars.win_ptr, img.ptr, 0, 0);
+//	printf("lnlen = %i\n", img.lnlen);
+//	pixel_push(&img, 0, 0, 0x00FF0000);
+//	mlx_put_image_to_window(vars.mlx_ptr, vars.win_ptr, img.ptr, 0, 0);
 
 	mlx_loop_hook(vars.mlx_ptr, no_event, &vars);
 	mlx_loop(vars.mlx_ptr);
 
 	return (0);
 }
+
+////	Showing motion images to the window and managing with the keyboard.
+////	choose a color (1 to 8 keys), and click over the window with the left or right button.
+////	Drag the shape where you want, change its color, move it with the wasd keys.
+////	Press 'e' to keep it or 'q' to erase it.
+////	Adjust it with the WASD keys, and fix it wiht the E.
+//
+//typedef struct s_img
+//{
+//	void		*ptr;
+//	char		*addr;
+//	int	bpp;
+//	int	lnlen;
+//	int	endian;
+//}			t_img;
+//
+//typedef struct s_shape
+//{
+//	char		type;
+//	int			x;
+//	int			y;
+//	int			x_mov;
+//	int			y_mov;
+//	int			size;
+//}			t_shape;
+//
+//typedef struct s_vars
+//{
+//	void		*mlx_ptr;
+//	void		*win_ptr;
+//	t_img		img0;
+//	t_img		img1;
+//	t_shape		shape;
+//	char		img;
+//	int			x_dim;
+//	int			y_dim;
+//	unsigned	color;
+//}			t_vars;
+//
+//int	press_key(int key_code, t_vars *vars);
+//void	change_color(int key_color, t_vars *vars);
+//int	wasdeq(int key_code, t_vars *vars);
+//int	release_key(int key_code, t_vars *vars);
+//int	window_area(int key_code, t_vars *vars);
+//int	square_paint(t_vars *vars);
+//int	circle_paint(t_vars *vars);
+//void	fix_shape(t_vars *vars);
+//void	erase_shape(t_vars *vars);
+//void	pixel_push(t_vars *vars, int x, int y);
+//void	copy_img(t_vars *vars);
+//
+//
+//
+//int	press_key(int key_code, t_vars *vars)
+//{
+//	if ((key_code >= 12 && key_code <= 14) || (key_code >= 0 && key_code <= 2))
+//		wasdeq(key_code, vars);
+//	else if (key_code == 53)
+//		mlx_destroy_window(vars->mlx_ptr, vars->win_ptr);
+//	else if ((key_code >= 18 && key_code <= 23) || key_code == 26 || key_code == 28)
+//		change_color(key_code, vars);
+//	else if ((key_code <= 126 && key_code >= 123) || key_code == 49)
+//		window_area(key_code, vars);
+//	return (0);
+//}
+//
+//void	change_color(int key_code, t_vars *vars)
+//{
+//	if (key_code == 28)
+//		vars->color = 0x00ffffff;
+//	else if (key_code == 18)
+//		vars->color = 0x00ff0000;
+//	else if (key_code == 19)
+//		vars->color = 0x0000ff00;
+//	else if (key_code == 20)
+//		vars->color = 0x000000ff;
+//	else if (key_code == 21)
+//		vars->color = 0x0000ffff;
+//	else if (key_code == 23)
+//		vars->color = 0x00ff00ff;
+//	else if (key_code == 22)
+//		vars->color = 0x00ffff00;
+//	else if (key_code == 26)
+//		vars->color = 0x00000000;
+//	if (vars->img == 1 || vars->img == 2)
+//	{
+//		copy_img(vars);
+//		if (vars->shape.type == 's')
+//			square_paint(vars);
+//		else if (vars->shape.type == 'c')
+//			circle_paint(vars);
+//	}
+//}
+//
+//int	wasdeq(int key_code, t_vars *vars)
+//{
+//
+//	if (key_code == 12)
+//	{
+//		erase_shape(vars);
+//		return (0);
+//	}
+//	if (vars->img == 2)
+//	{
+//		if (key_code == 14)
+//		{
+//			fix_shape(vars);
+//			return (0);
+//		}
+//		else if (key_code == 13)
+//			vars->shape.y_mov = -1;
+//		else if (key_code == 0)
+//			vars->shape.x_mov = -1;
+//		else if (key_code == 1)
+//			vars->shape.y_mov = 1;
+//		else if (key_code == 2)
+//			vars->shape.x_mov = 1;
+//	}
+//	return (0);
+//}
+//
+//int	release_key(int key_code, t_vars *vars)
+//{
+//	if (key_code == 13)
+//		vars->shape.y_mov = 0;
+//	else if (key_code == 0)
+//		vars->shape.x_mov = 0;
+//	else if (key_code == 1)
+//		vars->shape.y_mov = 0;
+//	else if (key_code == 2)
+//		vars->shape.x_mov = 0;
+//	return (0);
+//}
+//
+//int	window_area(int key_code, t_vars *vars)
+//{
+//	short int	x0;
+//	short int	x1;
+//	short int	y0;
+//	short int	y1;
+//	short int	i;
+//	short int	j;
+//
+//	vars->img = 0;
+//	x0 = 0 +  (vars->x_dim / 2) * (key_code == 124);
+//	x1 = vars->x_dim / (1 + (key_code == 123));
+//	y0 = 0 +  (vars->y_dim / 2) * (key_code == 125);
+//	y1 = vars->y_dim / (1 + (key_code == 126));
+//
+//	j = y0;
+//	while (j < y1)
+//	{
+//		i = x0;
+//		while (i < x1)
+//		{
+//			pixel_push(vars, i, j);
+//			i++;
+//		}
+//		j++;
+//	}
+//	copy_img(vars);
+//	return (0);
+//}
+//
+//int square_paint(t_vars *vars)
+//{
+//	int i;
+//	int j;
+//
+//	vars->shape.x += vars->shape.x_mov;
+//	vars->shape.y += vars->shape.y_mov;
+//	j = (vars->shape.y - vars->shape.size / 2) * (vars->shape.y >= vars->shape.size / 2 );
+//	while (j < (vars->shape.y + vars->shape.size / 2) && j < vars->y_dim)
+//	{
+//		i = (vars->shape.x - vars->shape.size / 2) * (vars->shape.x >= vars->shape.size / 2 );
+//		while (i < (vars->shape.x + vars->shape.size / 2) && i < vars->x_dim)
+//		{
+//			pixel_push(vars, i, j);
+//			i++;
+//		}
+//		j++;
+//	}
+//	return (0);
+//}
+//
+//int circle_paint(t_vars *vars)
+//{
+//	int i;
+//	int j;
+//
+//	vars->shape.x += vars->shape.x_mov;
+//	vars->shape.y += vars->shape.y_mov;
+//	j = (vars->shape.y - vars->shape.size / 2) * (vars->shape.y >= vars->shape.size / 2 );
+//	while (j < (vars->shape.y + vars->shape.size / 2) && j < vars->y_dim)
+//	{
+//		i = (vars->shape.x - vars->shape.size / 2) * (vars->shape.x >= vars->shape.size / 2 );
+//		while (i < (vars->shape.x + vars->shape.size / 2) && i < vars->x_dim)
+//		{
+//			if ((i - vars->shape.x) * (i - vars->shape.x) + (j - vars->shape.y) * (j - vars->shape.y) <= (vars->shape.size / 2) * (vars->shape.size / 2))
+//				pixel_push(vars, i, j);
+//			i++;
+//		}
+//		j++;
+//	}
+//	return (0);
+//}
+//
+//void	pixel_push(t_vars *vars, int x, int y)
+//{
+//	char	*dst;
+//
+//	if (vars->img == 0)
+//	{
+//		dst = vars->img0.addr + (y * vars->img0.lnlen + x * (vars->img0.bpp / 8));
+//		*(unsigned int*)dst = vars->color;
+//	}
+//	else if (vars->img == 1 || vars->img == 2)
+//	{
+//		dst = vars->img1.addr + (y * vars->img1.lnlen + x * (vars->img1.bpp / 8));
+//		*(unsigned int*)dst = vars->color;
+//	}
+//}
+//
+//void	copy_img(t_vars *vars)
+//{
+//	char		*dst;
+//	int	x;
+//	int	y;
+//
+//	y = 0;
+//	while (y < vars->y_dim)
+//	{
+//		x = 0;
+//		while (x < vars->x_dim)
+//		{
+//			dst = vars->img1.addr + (y * vars->img1.lnlen + x * (vars->img1.bpp / 8));
+//			*(unsigned int*)dst = *(unsigned int*)(vars->img0.addr + (y * vars->img0.lnlen + x * (vars->img0.bpp / 8)));
+//			x++;
+//		}
+//		y++;
+//	}
+//}
+//
+//int	no_event(t_vars *vars)
+//{
+//	if (vars->img > 0 && (vars->shape.x_mov != 0 || vars->shape.y_mov != 0))
+//	{
+//		copy_img(vars);
+//		if (vars->shape.type == 's')
+//			square_paint(vars);
+//		else if (vars->shape.type == 'c')
+//			circle_paint(vars);
+//	}
+//	mlx_put_image_to_window(vars->mlx_ptr, vars->win_ptr, vars->img1.ptr, 0, 0);
+//
+//	return (0);
+//}
+//
+//int press_button(int button_code, int x, int y, t_vars *vars)
+//{
+//	vars->shape.size += 1 * (button_code == 4) - 1 * (button_code == 5);
+//	if (button_code == 1 || button_code == 2)
+//	{
+//		if (vars->img == 1 || vars->img == 2)
+//			fix_shape(vars);
+//		if (button_code == 1)
+//			vars->shape.type = 'c';
+//		else if (button_code == 2)
+//			vars->shape.type = 's';
+//		vars->img = 1;
+//		vars->shape.x = x;
+//		vars->shape.y = y;
+//	}
+//	copy_img(vars);
+//	if (vars->shape.type == 's')
+//		square_paint(vars);
+//	else if (vars->shape.type == 'c')
+//		circle_paint(vars);
+//	return (0);
+//}
+//
+//int move_mouse(int x, int y, t_vars *vars)
+//{
+//	if (vars->img == 1)
+//	{
+//		copy_img(vars);
+//		vars->shape.x = x;
+//		vars->shape.y = y;
+//		if (vars->shape.type == 's')
+//			square_paint(vars);
+//		else if (vars->shape.type == 'c')
+//			circle_paint(vars);
+//	}
+//	return (0);
+//}
+//
+//int release_button(int button_code, int x, int y, t_vars *vars)
+//{
+//	button_code = 0;
+//	vars->img = 2;
+//	vars->shape.x = x;
+//	vars->shape.y = y;
+//	copy_img(vars);
+//	if (vars->shape.type == 's')
+//		square_paint(vars);
+//	else if (vars->shape.type == 'c')
+//		circle_paint(vars);
+//	return (0);
+//}
+//
+//void	fix_shape(t_vars *vars)
+//{
+//	vars->img = 0;
+//	if (vars->shape.type == 's')
+//		square_paint(vars);
+//	else if (vars->shape.type == 'c')
+//		circle_paint(vars);
+//	copy_img(vars);
+//}
+//
+//void	erase_shape(t_vars *vars)
+//{
+//	vars->img = 0;
+//	copy_img(vars);
+//}
+//
+//void	shape_init(t_vars *vars)
+//{
+//	t_shape		shape;
+//	
+//	shape.type = 'c';
+//	shape.size = 24;
+//	shape.x = 0;
+//	shape.y = 0;
+//	shape.x_mov = 0;
+//	shape.y_mov = 0;
+//	vars->shape = shape;
+//}
+//
+//int	main(void)
+//{
+//	t_vars		vars;
+//	t_img		img0;
+//	t_img		img1;
+//
+//	shape_init(&vars);
+//	vars.x_dim = 800;
+//	vars.y_dim = 600;
+//	vars.color = 0;
+//	vars.img = 0;
+//	vars.mlx_ptr = mlx_init();
+//	vars.win_ptr = mlx_new_window(vars.mlx_ptr, vars.x_dim, vars.y_dim, "Movement");
+//	mlx_hook(vars.win_ptr, 2, 1L<<0, press_key, &vars);
+//	mlx_hook(vars.win_ptr, 4, 0L, press_button, &vars);
+//	mlx_hook(vars.win_ptr, 6, 0L, move_mouse, &vars);
+//	mlx_hook(vars.win_ptr, 5, 0L, release_button, &vars);
+//	mlx_hook(vars.win_ptr, 3, 1L<<1, release_key, &vars);
+//
+//	img0.ptr = mlx_new_image(vars.mlx_ptr, vars.x_dim, vars.y_dim);
+//	img0.addr = mlx_get_data_addr(img0.ptr, &img0.bpp, &img0.lnlen, &img0.endian);
+//	img1.ptr = mlx_new_image(vars.mlx_ptr, vars.x_dim, vars.y_dim);
+//	img1.addr = mlx_get_data_addr(img1.ptr, &img1.bpp, &img1.lnlen, &img1.endian);
+//	vars.img0 = img0;
+//	vars.img1 = img1;
+//	
+//	mlx_loop_hook(vars.mlx_ptr, no_event, &vars);
+//	mlx_loop(vars.mlx_ptr);
+//
+//	return (0);
+//}
 
 
 ////	Sending motion images to the window
@@ -558,7 +1017,7 @@ int	main(void)
 //		while (x < vars->x_dim)
 //		{
 //			dst = vars->img2.addr + (y * vars->img2.lnlen + x * (vars->img2.bpp / 8));
-//			*(unsigned int*)dst = *(unsigned int*)(vars->img1.addr + (y * vars->img1.lnlen + x //* (vars->img1.bpp / 8)));
+//			*(unsigned int*)dst = *(unsigned int*)(vars->img1.addr + (y * vars->img1.lnlen + x * (vars->img1.bpp / 8)));
 //			x++;
 //		}
 //		y++;
