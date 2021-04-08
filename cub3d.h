@@ -6,7 +6,7 @@
 /*   By: jpizarro <jpizarro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/17 19:56:25 by jpizarro          #+#    #+#             */
-/*   Updated: 2021/03/20 02:20:25 by jpizarro         ###   ########.fr       */
+/*   Updated: 2021/04/06 10:17:25 by jpizarro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@
 # include <mlx.h>
 # include <stdio.h>
 # include "libs/color/color.h"
+# include "libs/libft/libft.h"
+# include "libs/mathft/mathft.h"
 
 typedef struct	s_mlxvars
 {

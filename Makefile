@@ -6,7 +6,7 @@
 #    By: jpizarro <jpizarro@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/03/19 11:24:00 by jpizarro          #+#    #+#              #
-#    Updated: 2021/03/26 18:35:38 by jpizarro         ###   ########.fr        #
+#    Updated: 2021/04/06 13:19:17 by jpizarro         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -41,16 +41,22 @@ all: $(NAME)
 
 $(NAME): $(OBJS) $(STATICS)
 	@echo "Creating $@"
-	@$(CC) $(CFLAGS) $(MLXFLAGS) $(OBJS) $(STATICS) -o $@
+	$(CC) $(CFLAGS) $(MLXFLAGS) $(OBJS) $(STATICS) -o $@
 	@echo "$@ is ready!"
 
 %.o: %.c
 #	@echo "files that need to be compiled: $?"
-	@$(CC) $(CFLAGS) -c $< -o $(<:.c=.o)
-#	@cd libs/color && $(MAKE)
+#	@$(CC) $(CFLAGS) -c $< -o $(<:.c=.o)
+	@$(CC) -c $< -o $(<:.c=.o)
+
+#$(STATICS):
+#	cd $(LIBFOLDERS) && $(MAKE)
 
 $(STATICS):
-	@cd $(LIBFOLDERS) && $(MAKE)
+	cd libs/mathft/ && $(MAKE)
+	cd libs/libft/ && $(MAKE)
+	cd libs/color/ && $(MAKE)
+
 
 clean:
 	@echo "Cleaing up binary files"
