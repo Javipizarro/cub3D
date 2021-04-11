@@ -6,14 +6,20 @@
 /*   By: jpizarro <jpizarro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 20:07:11 by jpizarro          #+#    #+#             */
-/*   Updated: 2021/04/05 12:02:28 by jpizarro         ###   ########.fr       */
+/*   Updated: 2021/04/10 21:18:40 by jpizarro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <mlx.h>
-#include "../cub3d.h"
+//#include "../cub3d.h"
 
 #include <stdio.h>
+# include <mlx.h>
+# include <stdio.h>
+//# include "libs/color/color.h"
+//# include "libs/libft/libft.h"
+//# include "libs/mathft/mathft.h"
+# include <math.h>
 
 //	Reading xpm images from files to the program: the same as the one below, but if you press "U", the program
 //	shows an xpm image that is preloaded in the draw_xpm function. The way to show this image is by parsing it
@@ -174,7 +180,7 @@ void	draw_xpm(int key_code, t_vars *vars)
 //	int		dx;
 //	int		dy;
 
-	xpm.ptr = mlx_xpm_file_to_image(vars->mlx_ptr, "./img/xpmwhite.xpm", &xpm.x_dim, &xpm.y_dim);
+	xpm.ptr = mlx_xpm_file_to_image(vars->mlx_ptr, "./img/eagle.xpm", &xpm.x_dim, &xpm.y_dim);
 //	xpm.ptr = mlx_xpm_file_to_image(vars->mlx_ptr, "./img/enemy.xpm", &xpm.x_dim, &xpm.y_dim);
 	xpm.addr = mlx_get_data_addr(xpm.ptr, &xpm.bpp, &xpm.lnlen, &xpm.endian);
 	vars->xpm = xpm;

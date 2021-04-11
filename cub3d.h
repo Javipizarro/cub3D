@@ -6,7 +6,7 @@
 /*   By: jpizarro <jpizarro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/17 19:56:25 by jpizarro          #+#    #+#             */
-/*   Updated: 2021/04/09 22:32:32 by jpizarro         ###   ########.fr       */
+/*   Updated: 2021/04/10 18:07:31 by jpizarro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,11 +23,26 @@
 typedef struct s_img
 {
 	void		*ptr;
+//	char		*path;
 	char		*addr;
+	int			dimy;
+	int			dimx;
+//	int			y_pos;
+//	int			x_pos;
 	int			bpp;
 	int			lnlen;
 	int			endian;
 }			t_img;
+
+
+//typedef struct s_img
+//{
+//	void		*ptr;
+//	char		*addr;
+//	int			bpp;
+//	int			lnlen;
+//	int			endian;
+//}			t_img;
 
 typedef struct s_controls
 {
@@ -72,9 +87,31 @@ typedef	struct s_raycast
 	double		inix;
 	char		face;
 	double		dist;
+	double		rayimp;
 	int			lnh;
 	int			color;
 }			t_raycast;
+
+typedef struct s_set
+{
+	t_img		n;
+	t_img		s;
+	t_img		e;
+	t_img		w;
+	t_img		s1;
+}			t_set;
+
+//typedef struct s_map
+//{
+////	int			dimy;
+////	int			dimx;
+////	int			**map;
+//	void		*txn;
+//	void		*txs;
+//	void		*txe;
+//	void		*txw;
+//	void		*spr;
+//}			t_map;
 
 typedef struct s_mlx
 {
@@ -86,6 +123,7 @@ typedef struct s_mlx
 	t_raycast	rc;
 	t_controls	ctr;
 	t_player	py;
+	t_set		set;
 }			t_mlx;
 
 int		bye(t_mlx *mlx);

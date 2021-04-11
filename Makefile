@@ -6,7 +6,7 @@
 #    By: jpizarro <jpizarro@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/03/19 11:24:00 by jpizarro          #+#    #+#              #
-#    Updated: 2021/04/09 21:01:58 by jpizarro         ###   ########.fr        #
+#    Updated: 2021/04/10 21:40:48 by jpizarro         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -46,8 +46,8 @@ $(NAME): $(OBJS) $(STATICS)
 
 %.o: %.c
 #	@echo "files that need to be compiled: $?"
-	@$(CC) $(CFLAGS) -c $< -o $(<:.c=.o)
-#	@$(CC) -c $< -o $(<:.c=.o)
+#	@$(CC) $(CFLAGS) -c $< -o $(<:.c=.o)
+	@$(CC) -c $< -o $(<:.c=.o)
 
 #$(STATICS):
 #	cd $(LIBFOLDERS) && $(MAKE)
