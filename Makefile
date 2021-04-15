@@ -6,7 +6,7 @@
 #    By: jpizarro <jpizarro@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/03/19 11:24:00 by jpizarro          #+#    #+#              #
-#    Updated: 2021/04/10 21:40:48 by jpizarro         ###   ########.fr        #
+#    Updated: 2021/04/15 13:13:32 by jpizarro         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -56,6 +56,7 @@ $(STATICS):
 #	cd libs/mathft/ && $(MAKE)
 	cd libs/libft/ && $(MAKE)
 	cd libs/color/ && $(MAKE)
+	cd libs/get_next_line/ && $(MAKE)
 
 
 clean:
@@ -64,6 +65,7 @@ clean:
 #	cd libs/mathft/ && $(MAKE) $@
 	cd libs/libft/ && $(MAKE) $@
 	cd libs/color/ && $(MAKE) $@
+	cd libs/get_next_line/ && $(MAKE) $@
 
 
 fclean: clean
@@ -72,6 +74,7 @@ fclean: clean
 #	cd libs/mathft/ && $(MAKE) $@
 	cd libs/libft/ && $(MAKE) $@
 	cd libs/color/ && $(MAKE) $@
+	cd libs/get_next_line/ && $(MAKE) $@
 
 re: fclean all
 

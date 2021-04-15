@@ -6,7 +6,7 @@
 /*   By: jpizarro <jpizarro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/08 06:59:22 by jpizarro          #+#    #+#             */
-/*   Updated: 2021/04/11 08:43:05 by jpizarro         ###   ########.fr       */
+/*   Updated: 2021/04/15 13:35:49 by jpizarro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,11 +53,11 @@ void	set_set(t_mlx *mlx)
 	
 	set.n.ptr = mlx_xpm_file_to_image(mlx->mlx, "./img/eagle.xpm", &set.n.dimx, &set.n.dimy);
 	set.n.addr = mlx_get_data_addr(set.n.ptr, &set.n.bpp, &set.n.lnlen, &set.n.endian);
-	set.s.ptr = mlx_xpm_file_to_image(mlx->mlx, "./img/eagle.xpm", &set.s.dimx, &set.s.dimy);
+	set.s.ptr = mlx_xpm_file_to_image(mlx->mlx, "./img/greystone.xpm", &set.s.dimx, &set.s.dimy);
 	set.s.addr = mlx_get_data_addr(set.s.ptr, &set.s.bpp, &set.s.lnlen, &set.s.endian);
-	set.e.ptr = mlx_xpm_file_to_image(mlx->mlx, "./img/eagle.xpm",  &set.e.dimx, &set.e.dimy);
+	set.e.ptr = mlx_xpm_file_to_image(mlx->mlx, "./img/purplestone.xpm",  &set.e.dimx, &set.e.dimy);
 	set.e.addr = mlx_get_data_addr(set.e.ptr, &set.e.bpp, &set.e.lnlen, &set.e.endian);
-	set.w.ptr = mlx_xpm_file_to_image(mlx->mlx, "./img/eagle.xpm",  &set.w.dimx, &set.w.dimy);
+	set.w.ptr = mlx_xpm_file_to_image(mlx->mlx, "./img/wood.xpm",  &set.w.dimx, &set.w.dimy);
 	set.w.addr = mlx_get_data_addr(set.w.ptr, &set.w.bpp, &set.w.lnlen, &set.w.endian);
 	set.s1.ptr = mlx_xpm_file_to_image(mlx->mlx, "./img/greenlight.xpm", &set.s1.dimx, &set.s1.dimy);
 	set.s1.addr = mlx_get_data_addr(set.s1.ptr, &set.s1.bpp, &set.s1.lnlen, &set.s1.endian);
@@ -95,7 +95,7 @@ int	bye(t_mlx *mlx)
 //}
 
 
-
+//	INESTIGAR POR QUÉ SI RENOMBRO A ESTA FUNCIÓN Y LA LLAMO DESDE OTRO MAIN, DA SEGFAULT
 int	main(void)
 {
 	t_mlx		mlx;

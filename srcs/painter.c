@@ -6,7 +6,7 @@
 /*   By: jpizarro <jpizarro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/09 08:08:41 by jpizarro          #+#    #+#             */
-/*   Updated: 2021/04/11 08:48:24 by jpizarro         ###   ########.fr       */
+/*   Updated: 2021/04/15 08:20:35 by jpizarro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,13 +64,27 @@ void	pixel_push(t_mlx *mlx, int x, int y)
 //	return (0);
 //}
 
+t_img	*pick_txtr(t_mlx *mlx)
+{
+	t_img	*txtr;
+
+	if (mlx->rc.face == 'n')
+		txtr = &mlx->set.n;
+	else if (mlx->rc.face == 's')
+		txtr = &mlx->set.s;
+	else if (mlx->rc.face == 'e')
+		txtr = &mlx->set.e;
+	else if (mlx->rc.face == 'w')
+		txtr = &mlx->set.w;
+	return (txtr);
+}
 
 void	paint_line(t_mlx *mlx)
 {
-	int	i;
-	int	xpmx;
-	int	xpmy;
-//	SEGÚN JUEGAS EL ESCENARIO SE ENCOGE EN LA HORIZONTAL
+	int		i;
+	int		xpmx;
+	int		xpmy;
+	t_img	*txtr;
 
 	i = 0;
 	mlx->rc.color = 0;
@@ -80,15 +94,16 @@ void	paint_line(t_mlx *mlx)
 		pixel_push(mlx, mlx->rc.line, mlx->winh - i);
 		i++;
 	}
-	xpmx = (int)(mlx->set.n.dimx * mlx->rc.rayimp);
+	txtr = pick_txtr(mlx);
+	xpmx = (int)(txtr->dimx * mlx->rc.rayimp);
 	while (i < (mlx->winh + mlx->rc.lnh) / 2)
 	{
-		xpmy = (int)(mlx->set.n.dimy * (2 * i - mlx->winh + mlx->rc.lnh) / (2 * mlx->rc.lnh));
-		//	Verifica si alguna vez estamos imprimiendo fuera de la textura.
-		if (xpmy < 0 || xpmy >= mlx->set.n.dimy)
-			printf("xpmy OOR = %i\ndimy = %i, winh = %i, lnh = %i, i = %i, posy = %f, posx = %f, diry = %f, dirx = %f\n", xpmy, mlx->set.n.dimy, mlx->winh, mlx->rc.lnh, i, mlx->py.posy, mlx->py.posx, mlx->py.diry, mlx->py.dirx);
-		xpmy < 0 ? xpmy = abs(xpmy) : xpmy >= mlx->set.n.dimy ? xpmy = mlx->set.n.dimy - 1 : 1;
-		mlx->rc.color = *(unsigned*)(mlx->set.n.addr + (xpmy * mlx->set.n.dimx + xpmx) * mlx->set.n.bpp / 8);
+		xpmy = (int)(txtr->dimy * (2 * i - mlx->winh + mlx->rc.lnh) / (2 * mlx->rc.lnh));
+		//	Verifica si alguna vez estamos imprimiendo fuera de la textura. //////
+		if (xpmy < 0 || xpmy >= txtr->dimy)
+			printf("xpmy OOR = %i\ndimy = %i, winh = %i, lnh = %i, i = %i, posy = %f, posx = %f, diry = %f, dirx = %f\n", xpmy, txtr->dimy, mlx->winh, mlx->rc.lnh, i, mlx->py.posy, mlx->py.posx, mlx->py.diry, mlx->py.dirx);
+		////////
+		mlx->rc.color = *(unsigned*)(txtr->addr + (xpmy * txtr->dimx + xpmx) * txtr->bpp / 8);
 		pixel_push(mlx, mlx->rc.line, i);
 		i++;
 	}

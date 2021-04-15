@@ -6,7 +6,7 @@
 /*   By: jpizarro <jpizarro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/09 07:58:01 by jpizarro          #+#    #+#             */
-/*   Updated: 2021/04/11 08:41:08 by jpizarro         ###   ########.fr       */
+/*   Updated: 2021/04/11 09:35:27 by jpizarro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,10 +21,20 @@
 int	play(t_mlx *mlx)
 {
 	float	dev;
+	float	oldx;
+	float	oldy;
+
+	oldx = mlx->py.posx;
+	oldy = mlx->py.posy;
 	mlx->py.posx += mlx->py.dirx * mlx->ctr.speed * mlx->py.move[0] * (0.7 + 0.3 * (!mlx->py.move[1]));
 	mlx->py.posy += mlx->py.diry * mlx->ctr.speed * mlx->py.move[0] * (0.7 + 0.3 * (!mlx->py.move[1]));
 	mlx->py.posx += mlx->py.diry * mlx->ctr.speed * mlx->py.move[1] * (0.7 + 0.3 * (!mlx->py.move[0]));
 	mlx->py.posy -= mlx->py.dirx * mlx->ctr.speed * mlx->py.move[1] * (0.7 + 0.3 * (!mlx->py.move[0]));
+//////////// Manejo de colisiones contra las paredes, a espera de poder almacenar el mapa	
+//	if ((int)oldx != (int)mlx->py.posx && map[(int)oldy][(int)mlx->py.posx])
+//		mlx->py.posx = oldx;
+//	if ((int)oldy != (int)mlx->py.posy && map[(int)mlx->py.posy][(int)oldx])
+//		mlx->py.posy = oldy;
 	mlx->py.dirx = mlx->py.dirx * cos(mlx->ctr.turn * mlx->py.spin) - mlx->py.diry * sin(mlx->ctr.turn * mlx->py.spin);
 	mlx->py.diry = mlx->py.dirx * sin(mlx->ctr.turn * mlx->py.spin) + mlx->py.diry * cos(mlx->ctr.turn * mlx->py.spin);
 	dev = hypot(mlx->py.dirx, mlx->py.diry);
