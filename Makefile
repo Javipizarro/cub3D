@@ -6,7 +6,7 @@
 #    By: jpizarro <jpizarro@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/03/19 11:24:00 by jpizarro          #+#    #+#              #
-#    Updated: 2021/04/15 13:13:32 by jpizarro         ###   ########.fr        #
+#    Updated: 2021/04/20 19:42:41 by jpizarro         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -81,10 +81,14 @@ re: fclean all
 run: all
 	@./$(NAME)
 
-debug: $(OBJS) $(STATICS)
+debug: fclean $(OBJS) $(STATICS)
 	@echo "Creating $@ file"
-	@$(CC) -g $(CFLAGS) $(MLXFLAGS) $(OBJS) $(STATICS) -o $@
+	@$(CC) -g $(MLXFLAGS) $(OBJS) $(STATICS) -o $@
+#	@$(CC) -g $(CFLAGS) $(MLXFLAGS) $(OBJS) $(STATICS) -o $@
 	@echo "$@ is ready!"
+
+debrun: debug
+	gdb $(NAME)
 
 show:
 	@echo "SRCS $(SRCS)"

@@ -6,7 +6,7 @@
 /*   By: jpizarro <jpizarro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/17 19:56:25 by jpizarro          #+#    #+#             */
-/*   Updated: 2021/04/10 18:07:31 by jpizarro         ###   ########.fr       */
+/*   Updated: 2021/04/19 12:53:08 by jpizarro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,10 @@
 
 # include <mlx.h>
 # include <stdio.h>
-# include "libs/color/color.h"
+//# include "libs/color/color.h"
 # include "libs/libft/libft.h"
 //# include "libs/mathft/mathft.h"
+# include "libs/get_next_line/get_next_line.h"
 # include <math.h>
 
 typedef struct s_img
@@ -134,6 +135,6 @@ void	paint_line(t_mlx *mlx);
 void	pixel_push(t_mlx *mlx, int x, int y);
 int		play(t_mlx *mlx);
 int		raycaster(t_mlx *mlx);
-
+int		button_on(t_mlx *mlx);
 
 #endif

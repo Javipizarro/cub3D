@@ -6,7 +6,7 @@
 /*   By: jpizarro <jpizarro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/09 08:02:12 by jpizarro          #+#    #+#             */
-/*   Updated: 2021/04/11 07:32:20 by jpizarro         ###   ########.fr       */
+/*   Updated: 2021/04/18 11:38:24 by jpizarro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ int	raycaster(t_mlx *mlx)
 
 //	int	rc.mapw = 24;
 //	int rc.maph = 24;
-	mlx->winw = 800;
+//	mlx->winw = 800;
 //	mlx->winh = 600;
 
 //int map[5][5] = {
