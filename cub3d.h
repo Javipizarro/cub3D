@@ -6,7 +6,7 @@
 /*   By: jpizarro <jpizarro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/17 19:56:25 by jpizarro          #+#    #+#             */
-/*   Updated: 2021/04/19 12:53:08 by jpizarro         ###   ########.fr       */
+/*   Updated: 2021/04/24 21:17:02 by jpizarro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,9 @@
 
 # include <mlx.h>
 # include <stdio.h>
+//# include <stdlib.h>
+//# include <unistd.h>
+# include <fcntl.h>
 //# include "libs/color/color.h"
 # include "libs/libft/libft.h"
 //# include "libs/mathft/mathft.h"
@@ -24,7 +27,6 @@
 typedef struct s_img
 {
 	void		*ptr;
-//	char		*path;
 	char		*addr;
 	int			dimy;
 	int			dimx;
@@ -95,11 +97,18 @@ typedef	struct s_raycast
 
 typedef struct s_set
 {
+	char		*pathn;
 	t_img		n;
+	char		*paths;
 	t_img		s;
+	char		*pathe;
 	t_img		e;
+	char		*pathw;
 	t_img		w;
-	t_img		s1;
+	char		*pathp;
+	t_img		p;
+	int			f;
+	int			c;
 }			t_set;
 
 //typedef struct s_map
@@ -127,14 +136,20 @@ typedef struct s_mlx
 	t_set		set;
 }			t_mlx;
 
+int		builder(int ac, t_mlx *mlx);
 int		bye(t_mlx *mlx);
-//int		key_down(int key, t_mlx *mlx);
+int		dot_cub_parser(t_mlx *mlx, char *cub_path);
 int		key_pressed(int key, t_mlx *mlx);
 int		key_released(int key, t_mlx *mlx);
+int		msnprt(int fd, char *msn);
 void	paint_line(t_mlx *mlx);
 void	pixel_push(t_mlx *mlx, int x, int y);
 int		play(t_mlx *mlx);
+int		printerror(int err);
 int		raycaster(t_mlx *mlx);
-int		button_on(t_mlx *mlx);
+int		window_sizer(t_mlx *mlx, char **elem);
+int		texturizer(t_mlx *mlx, char **elem);
+int		colorizer(t_mlx *mlx, char **elem);
+
 
 #endif

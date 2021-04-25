@@ -6,7 +6,7 @@
 #    By: jpizarro <jpizarro@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/03/19 11:24:00 by jpizarro          #+#    #+#              #
-#    Updated: 2021/04/20 19:42:41 by jpizarro         ###   ########.fr        #
+#    Updated: 2021/04/25 21:04:30 by jpizarro         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -47,7 +47,7 @@ $(NAME): $(OBJS) $(STATICS)
 %.o: %.c
 #	@echo "files that need to be compiled: $?"
 #	@$(CC) $(CFLAGS) -c $< -o $(<:.c=.o)
-	@$(CC) -c $< -o $(<:.c=.o)
+	@$(CC) -g -c $< -o $(<:.c=.o)
 
 #$(STATICS):
 #	cd $(LIBFOLDERS) && $(MAKE)
@@ -55,7 +55,7 @@ $(NAME): $(OBJS) $(STATICS)
 $(STATICS):
 #	cd libs/mathft/ && $(MAKE)
 	cd libs/libft/ && $(MAKE)
-	cd libs/color/ && $(MAKE)
+#	cd libs/color/ && $(MAKE)
 	cd libs/get_next_line/ && $(MAKE)
 
 
@@ -64,7 +64,7 @@ clean:
 	@$(RM) $(OBJS)
 #	cd libs/mathft/ && $(MAKE) $@
 	cd libs/libft/ && $(MAKE) $@
-	cd libs/color/ && $(MAKE) $@
+#	cd libs/color/ && $(MAKE) $@
 	cd libs/get_next_line/ && $(MAKE) $@
 
 
@@ -73,13 +73,13 @@ fclean: clean
 	@$(RM) $(NAME) debug
 #	cd libs/mathft/ && $(MAKE) $@
 	cd libs/libft/ && $(MAKE) $@
-	cd libs/color/ && $(MAKE) $@
+#	cd libs/color/ && $(MAKE) $@
 	cd libs/get_next_line/ && $(MAKE) $@
 
 re: fclean all
 
 run: all
-	@./$(NAME)
+	@./$(NAME) map.cub
 
 debug: fclean $(OBJS) $(STATICS)
 	@echo "Creating $@ file"
