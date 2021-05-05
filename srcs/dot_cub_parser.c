@@ -6,56 +6,43 @@
 /*   By: jpizarro <jpizarro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/21 17:32:18 by jpizarro          #+#    #+#             */
-/*   Updated: 2021/04/25 13:32:05 by jpizarro         ###   ########.fr       */
+/*   Updated: 2021/05/04 12:07:28 by jpizarro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 /*
-**	In this file, the map is checked and set.
+**	In this file, the map is checkelemsed and set.
 */
 
 #include "../cub3d.h"
 
-int	parse_map_line(t_mlx *mlx, char *line)
+int	free_split(int r, char **elem, int wn)
 {
-	printf("%s\n", line);
-	return (0);
-}
-
-int	mapper(t_mlx *mlx, int fd, char **line)
-{
-	int	r;
-	while (ft_wordcount(*line, ' '))
+	while (wn--)
 	{
-		r = parse_map_line(mlx, *line);
-		free(*line);
-		*line = NULL;
-		if (r)
-			return (r);
-		r = get_next_line(fd, line);
-		if (r == -1)
-			return (msnprt(2, "Corrupt .cub file"));
+//		printf("\n-------------\nliberando: %p\tcontenido: %s\n-----------------\n", elem[wn], elem[wn]);
+		free (elem[wn]);
+		elem[wn] = NULL;
 	}
-	while (!(ft_wordcount(*line, ' ')) && r == 1)
-		r = get_next_line(fd, line);
-	if (!r)
-		return (0);
-	else if (r == 1)
-		return (msnprt(2, "Nothing allowed after map on file .cub"));
-	return (msnprt(2, "Corrupt .cub file"));
+	
+//	printf("\n-------------\nliberando: %p\tprincipal split\n-----------------\n", elem);
+
+	free(elem);
+	elem = NULL;
+	return (r);
 }
 
-char	check(unsigned char pos)
+char	checkelems(unsigned char pos)
 {
-	static unsigned char check = 0;
+	static unsigned char checkelems = 0;
 
-	if (pos == 0xff && check == 0xff)
+	if (pos == 0xff && checkelems == 0xff)
 		return (0);
 	if (pos == 0xff)
 		return (1);
-	if (1 << pos & check)
+	if (1 << pos & checkelems)
 		return (msnprt(2, "Duplicated element on .cub file"));
-	check |= 1 << pos;
+	checkelems |= 1 << pos;
 	return (0);
 }
 
@@ -66,20 +53,24 @@ int parse_element(t_mlx *mlx, char *line)
 
 	wn = ft_wordcount(line, ' ');
 	elem = ft_split(line, ' ');
-	if (!(check(0xff)) && elem[0][0] >= '0' && elem[0][0] <= '2')
-		return (0);
-	if (wn == 3 && !(ft_strncmp(elem[0], "R", 2)) && !(check(0)))
-		return (window_sizer(mlx, elem));
-	else if (wn == 2 && ((!(ft_strncmp(elem[0], "NO", 3)) && !(check(1)))
-		|| (!(ft_strncmp(elem[0], "SO", 3)) && !(check(2)))
-		|| (!(ft_strncmp(elem[0], "EA", 3)) && !(check(3)))
-		|| (!(ft_strncmp(elem[0], "WE", 3)) && !(check(4)))
-		|| (!(ft_strncmp(elem[0], "S", 2)) && !(check(5)))))
-		return (texturizer(mlx, elem));
-	else if (wn == 2 && ((!(ft_strncmp(elem[0], "F", 2)) && !(check(6)))
-		|| (!(ft_strncmp(elem[0], "C", 2)) && !(check(7)))))
-		return (colorizer(mlx, elem));
-	return (2);
+/////////////////////////////
+//		printf("después del split de parse_element: %i\n", system("leaks cub3D"));
+/////////////////////////////
+
+	if (!(checkelems(0xff)) && elem[0][0] >= '0' && elem[0][0] <= '2')
+		return (free_split(0, elem, wn));
+	if (wn == 3 && !(ft_strncmp(elem[0], "R", 2)) && !(checkelems(0)))
+		return (free_split(window_sizer(mlx, elem), elem, wn));
+	else if (wn == 2 && ((!(ft_strncmp(elem[0], "NO", 3)) && !(checkelems(1)))
+		|| (!(ft_strncmp(elem[0], "SO", 3)) && !(checkelems(2)))
+		|| (!(ft_strncmp(elem[0], "EA", 3)) && !(checkelems(3)))
+		|| (!(ft_strncmp(elem[0], "WE", 3)) && !(checkelems(4)))
+		|| (!(ft_strncmp(elem[0], "S", 2)) && !(checkelems(5)))))
+		return (free_split(texturizer(mlx, elem), elem, wn));
+	else if (wn == 2 && ((!(ft_strncmp(elem[0], "F", 2)) && !(checkelems(6)))
+		|| (!(ft_strncmp(elem[0], "C", 2)) && !(checkelems(7)))))
+		return (free_split(colorizer(mlx, elem), elem, wn));
+	return (free_split(2, elem, wn));
 }
 
 int	elements_parser(t_mlx *mlx, int fd, char **line)
@@ -90,17 +81,35 @@ int	elements_parser(t_mlx *mlx, int fd, char **line)
 	pe = 1;
 	while (pe == 1)
 	{
+/////////////////////////////
+//		printf("antes de gnl: %i\n", system("leaks cub3D"));
+/////////////////////////////
 		gnl = get_next_line(fd, line);
+/////////////////////////////
+//		printf("después de gnl: %i\n", system("leaks cub3D"));
+/////////////////////////////
 		if (gnl == -1)
 			return (msnprt(2, "Corrupt .cub file"));
 		else if (!gnl)
 			return (msnprt(2, "Not enough elements on .cub file"));
 		if (ft_wordcount(*line, ' '))
+/////////////////////////////
+//{
+//		printf("antes de parse_element: %i\n", system("leaks cub3D"));
+/////////////////////////////
 			pe = parse_element(mlx, *line);
+/////////////////////////////
+//		printf("después de parse_element: %i\n", system("leaks cub3D"));
+//}
+/////////////////////////////
+
 		if (pe)
 		{	
 			free(*line);
 			*line = NULL;
+/////////////////////////////
+//		printf("dentro del bucle de elements_parser: %i\n", system("leaks cub3D"));
+/////////////////////////////
 		}
 		if (pe > 1)
 			return (pe);

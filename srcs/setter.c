@@ -6,7 +6,7 @@
 /*   By: jpizarro <jpizarro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/24 20:46:08 by jpizarro          #+#    #+#             */
-/*   Updated: 2021/04/25 21:09:07 by jpizarro         ###   ########.fr       */
+/*   Updated: 2021/04/26 17:35:25 by jpizarro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,15 +78,15 @@ int	texturizer(t_mlx *mlx, char **elem)
 		&& elem[1][++i] == 'p' &&  elem[1][++i] == 'm'))
 		return (msnprt(2, "Invalid texture file, only .xpm files are allowed"));
 	if (elem[0][0] == 'N')
-		mlx->set.pathn = elem[1];
+		mlx->set.pathn = ft_strdup(elem[1]);
 	else if (elem[0][0] == 'S' && elem[0][1] == 'O')
-		mlx->set.paths = elem[1];
+		mlx->set.paths = ft_strdup(elem[1]);
 	else if (elem[0][0] == 'E')
-		mlx->set.pathe = elem[1];
+		mlx->set.pathe = ft_strdup(elem[1]);
 	else if (elem[0][0] == 'W')
-		mlx->set.pathw = elem[1];
+		mlx->set.pathw = ft_strdup(elem[1]);
 	else if (elem[0][0] == 'S')
-		mlx->set.pathp = elem[1];
+		mlx->set.pathp = ft_strdup(elem[1]);
 	return (1);
 }
 
@@ -98,16 +98,16 @@ int get_color(char **elem, int *color)
 
 	r_g_b = ft_split(elem[1], ',');
 	if (arenum(r_g_b, 'c') == 2)
-		return (2);
+		return (free_split(2, r_g_b, 3));
 	i = 0;
 	while (i < 3)
 	{
 		comp = atoi(r_g_b[i]);
 		if (comp > 255)
-			return (msnprt(2, "Wrong color component"));
+			return (free_split(msnprt(2, "Wrong color component"), r_g_b, 3));
 		*color += comp << (8 * (2 - i++));
 	}
-	return (1);
+	return (free_split(1, r_g_b, 3));
 
 }
 

@@ -6,58 +6,61 @@
 /*   By: jpizarro <jpizarro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/08 06:59:22 by jpizarro          #+#    #+#             */
-/*   Updated: 2021/04/25 13:11:59 by jpizarro         ###   ########.fr       */
+/*   Updated: 2021/05/05 09:59:13 by jpizarro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
 /*
-**	This is the file where everything starts.
+**	This is the file where everything starts and ends.
 */
 
 #include "../cub3d.h"
 
-//int	msnprinter(int msn)
-//{
-//	if (!msn)
-//		write(1, "Thanks for playing\n", 19);
-//	else if (msn == 1)
-//		write(2, "Error\nInvalid number of arguments\n", 34);
-//	else if (msn == 2)
-//		write(2, "Error\nInvalid map file\n", 23);
-//	else if (msn == 3)
-//		write(2, "Error\nInvalid option, try '--save' or nothing\n", 46);
-//	else if (msn == 4)
-//		write(2, "Error\nMap file does not exist\n", 30);
-//	else if (msn == 10)
-//		write(2, "Error\nCorrupt file .cub\n", 24);
-//	else if (msn == 11)
-//		write(2, "Error\nNot enough elements on file .cub\n", 39);
-//	else if (msn == 12)
-//		write(2, "Error\nNot enough elemenst on file .cub\n", 39);
-//	else if (msn == 13)
-//		write(2, "Error\nNot enough elemenst on file .cub\n", 39);
-//	else if (msn == 14)
-//		write(2, "Error\nNot enough elemenst on file .cub\n", 39);
-//	else if (msn == 15)
-//		write(2, "Error\nNot enough elemenst on file .cub\n", 39);
-//	else if (msn == 16)
-//		write(2, "Error\nNot enough elemenst on file .cub\n", 39);
-//	else if (msn == 17)
-//		write(2, "Error\nNot enough elemenst on file .cub\n", 39);
-//	else if (msn == 18)
-//		write(2, "Error\nNot enough elemenst on file .cub\n", 39);
-//	else if (msn == 19)
-//		write(2, "Error\nNot enough elemenst on file .cub\n", 39);
-//	else if (msn == 20)
-//		write(2, "Error\nNot enough elemenst on file .cub\n", 39);
-//	else if (msn == 21)
-//		write(2, "Error\nNot enough elemenst on file .cub\n", 39);
-//	else if (msn == 22)
-//		write(2, "Error\nNothing allowed after map on file .cub\n", 45);
-//	system("leaks a.out");
-//	return (0);
-//}
+/*
+**	Initiates to NULL the mlx pointers that are needed to allocate
+*/
+
+void	mlx_ptr_to_null(t_mlx *mlx)
+{
+	mlx->set.pathn = NULL;
+	mlx->set.paths = NULL;
+	mlx->set.pathe = NULL;
+	mlx->set.pathw = NULL;
+	mlx->set.pathp = NULL;
+	mlx->map = NULL;
+}
+
+/*
+**	Check whether the mlx pointers are in use, if so, it liberates
+**	and set them to NULL.
+*/
+
+int final_free(t_mlx *mlx)
+{
+/////////////////////////////
+//		printf("en final_free: %i\n", system("leaks debug"));
+/////////////////////////////
+
+	if (mlx->set.pathn)
+		free (mlx->set.pathn);
+	if (mlx->set.paths)
+		free (mlx->set.paths);
+	if (mlx->set.pathe)
+		free (mlx->set.pathe);
+	if (mlx->set.pathw)
+		free (mlx->set.pathw);
+	if (mlx->set.pathp)
+		free (mlx->set.pathp);
+	if (mlx->map)
+		free_split(0, mlx->map, mlx->mapdimy);
+	mlx_ptr_to_null(mlx);
+	return (0);
+}
+
+/*
+**	Receives the mesages to prompt on the console through the apprpiate
+**	fd and returns the fd it has used.
+*/
 
 int	msnprt(int fd, char *msn)
 {
@@ -70,45 +73,59 @@ int	msnprt(int fd, char *msn)
 	return (fd);
 }
 
+/*
+**	Checks whether the progam has been iniciated with the correct arguments.
+*/
 
-int	arg_err(int ac, char **av)
+int	arg_err(int argc, char **argv)
 {
 	int	i;
 
-	if (ac < 2 || ac > 3)
+	if (argc < 2 || argc > 3)
 		return (msnprt(2, "Invalid number of arguments"));
 	i = 0;
-	while (av[1][i])
+	while (argv[1][i])
 		i++;
 	i -= 4;
-	if (!(i > 0 && av[1][i] == '.' && av[1][++i] == 'c'
-		&& av[1][++i] == 'u' &&  av[1][++i] == 'b'))
+	if (!(i > 0 && argv[1][i] == '.' && argv[1][++i] == 'c'
+		&& argv[1][++i] == 'u' &&  argv[1][++i] == 'b'))
 		return (msnprt(2, "Invalid map file"));
-	if (ac == 3 && ft_strncmp("--save", av[2], 7))
-		return (msnprt(2, "Invalid option, try '--save' or nothing"));
+	if (argc == 3 && ft_strncmp("--sargve", argv[2], 7))
+		return (msnprt(2, "Invalid option, try '--sargve' or nothing"));
 	return (0);
 }
 
 /*
-**	Checks the argumens.
-**	Checks and sets the map.
-**	Calls builder to start the game.
+**	Manages the secuece of functions to correctly start and exit cub3D
+**	Orders to check the argumens.
+**	Orders to check and set the map.
+**	Orders to check, start and finish the game.
+**	Orders to free the used pointers.
+**	Thanks for playing.
 */
 
-int	main(int ac, char **av)
+int	real_main(int argc, char **argv)
 {
 	t_mlx	mlx;
-	int		err;
 
-	err = arg_err(ac, av);
-	if (err)
+	mlx.err = arg_err(argc, argv);
+	if (mlx.err)
 		return (0);
-	err = dot_cub_parser(&mlx, av[1]);
-	if (err)
-		return (0);
-	//err = builder(ac, &mlx);
-	//if (err)
-	//	return (msnprt(2, "Incorrect textures files"));
-	msnprt(1, "Thanks for Playing!!!");
+	mlx_ptr_to_null(&mlx);
+	mlx.err = dot_cub_parser(&mlx, argv[1]);
+	if (mlx.err)
+		return (final_free(&mlx));
+	builder(argc, &mlx);
+	return (0);
+}
+
+int	main(int argc, char **argv)
+{
+	real_main(argc, argv);
+
+	if (argv[0][2] == 'c')
+		printf("%i\n", system("leaks cub3D"));
+	else
+		printf("%i\n", system("leaks debug"));
 	return (0);
 }

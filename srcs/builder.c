@@ -6,7 +6,7 @@
 /*   By: jpizarro <jpizarro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/21 12:53:14 by jpizarro          #+#    #+#             */
-/*   Updated: 2021/04/25 13:35:28 by jpizarro         ###   ########.fr       */
+/*   Updated: 2021/05/05 11:02:56 by jpizarro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,41 +28,47 @@ void	set_control(t_mlx *mlx)
 	mlx->ctr = ctr;
 }
 
-void	set_player(t_mlx *mlx)
+void	init_player(t_mlx *mlx)
 {
-	t_player py;
-
-	py.posx = 11.5;
-	py.posy = 22;
-	py.dirx = 0;
-	py.diry = -1;
-	py.move[0] = 0;
-	py.move[1] = 0;
-	py.spin = 0;
-	mlx->py = py;
+	mlx->py.move[0] = 0;
+	mlx->py.move[1] = 0;
+	mlx->py.spin = 0;
 }
 
-void	set_set(t_mlx *mlx)
+int	set_set(t_mlx *mlx)
 {
-	/////////////////////// CAMBIAR EL T_SET POR 5 T_IMG
-	t_set	set;
-	
-	set.n.ptr = mlx_xpm_file_to_image(mlx->mlx, mlx->set.pathn, &set.n.dimx, &set.n.dimy);
-	set.n.addr = mlx_get_data_addr(set.n.ptr, &set.n.bpp, &set.n.lnlen, &set.n.endian);
-	set.s.ptr = mlx_xpm_file_to_image(mlx->mlx, mlx->set.paths, &set.s.dimx, &set.s.dimy);
-	set.s.addr = mlx_get_data_addr(set.s.ptr, &set.s.bpp, &set.s.lnlen, &set.s.endian);
-	set.e.ptr = mlx_xpm_file_to_image(mlx->mlx, mlx->set.pathe,  &set.e.dimx, &set.e.dimy);
-	set.e.addr = mlx_get_data_addr(set.e.ptr, &set.e.bpp, &set.e.lnlen, &set.e.endian);
-	set.w.ptr = mlx_xpm_file_to_image(mlx->mlx, mlx->set.pathw,  &set.w.dimx, &set.w.dimy);
-	set.w.addr = mlx_get_data_addr(set.w.ptr, &set.w.bpp, &set.w.lnlen, &set.w.endian);
-	set.p.ptr = mlx_xpm_file_to_image(mlx->mlx, mlx->set.pathp, &set.p.dimx, &set.p.dimy);
-	set.p.addr = mlx_get_data_addr(set.p.ptr, &set.p.bpp, &set.p.lnlen, &set.p.endian);
-	mlx->set = set;
+	mlx->set.n.ptr = mlx_xpm_file_to_image(mlx->mlx, mlx->set.pathn,
+	&mlx->set.n.dimx, &mlx->set.n.dimy);
+	mlx->set.s.ptr = mlx_xpm_file_to_image(mlx->mlx, mlx->set.paths,
+	&mlx->set.s.dimx, &mlx->set.s.dimy);
+	mlx->set.e.ptr = mlx_xpm_file_to_image(mlx->mlx, mlx->set.pathe,
+	&mlx->set.e.dimx, &mlx->set.e.dimy);
+	mlx->set.w.ptr = mlx_xpm_file_to_image(mlx->mlx, mlx->set.pathw,
+	&mlx->set.w.dimx, &mlx->set.w.dimy);
+	mlx->set.p.ptr = mlx_xpm_file_to_image(mlx->mlx, mlx->set.pathp,
+	&mlx->set.p.dimx, &mlx->set.p.dimy);
+	if (!(mlx->set.n.ptr && mlx->set.s.ptr && mlx->set.e.ptr && mlx->set.w.ptr))
+		return (msnprt(2, "Texture file does not exits."));
+	mlx->set.n.addr = mlx_get_data_addr(mlx->set.n.ptr, &mlx->set.n.bpp,
+	&mlx->set.n.lnlen, &mlx->set.n.endian);
+	mlx->set.s.addr = mlx_get_data_addr(mlx->set.s.ptr, &mlx->set.s.bpp,
+	&mlx->set.s.lnlen, &mlx->set.s.endian);
+	mlx->set.e.addr = mlx_get_data_addr(mlx->set.e.ptr, &mlx->set.e.bpp,
+	&mlx->set.e.lnlen, &mlx->set.e.endian);
+	mlx->set.w.addr = mlx_get_data_addr(mlx->set.w.ptr, &mlx->set.w.bpp,
+	&mlx->set.w.lnlen, &mlx->set.w.endian);
+	mlx->set.p.addr = mlx_get_data_addr(mlx->set.p.ptr, &mlx->set.p.bpp,
+	&mlx->set.p.lnlen, &mlx->set.p.endian);
+	return (0);
 }
 
 int	bye(t_mlx *mlx)
 {
 	mlx_destroy_window(mlx->mlx, mlx->win);
+	final_free(mlx);
+	if (!(mlx->err))
+		msnprt(1, "Thanks for playing!!!");
+	system("leaks cub3D");
 	exit(0);
 	return (0);
 }
@@ -70,12 +76,17 @@ int	bye(t_mlx *mlx)
 int		builder(int ac, t_mlx *mlx)
 {
 	set_control(mlx);
-	set_player(mlx);
+	init_player(mlx);
 	mlx->winw = 800;
 	mlx->winh = 600;
 	mlx->mlx = mlx_init();
 	mlx->win = mlx_new_window(mlx->mlx, mlx->winw, mlx->winh, "RayCasting");
-	set_set(mlx);
+	mlx->err = set_set(mlx);
+	if (mlx->err)
+	{
+		bye(mlx);
+		return (2);
+	}
 	mlx->img.ptr = mlx_new_image(mlx->mlx, mlx->winw, mlx->winh);
 	mlx->img.addr = mlx_get_data_addr(mlx->img.ptr, &mlx->img.bpp, &mlx->img.lnlen, &mlx->img.endian);
 	mlx_do_key_autorepeatoff(mlx->mlx);

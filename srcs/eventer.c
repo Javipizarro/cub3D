@@ -6,7 +6,7 @@
 /*   By: jpizarro <jpizarro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/09 07:58:01 by jpizarro          #+#    #+#             */
-/*   Updated: 2021/04/22 20:45:31 by jpizarro         ###   ########.fr       */
+/*   Updated: 2021/05/04 18:45:04 by jpizarro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,13 @@
 */
 
 #include "../cub3d.h"
+
+/*
+**	Depending on the current motion applied to the camera, and the possible
+**	collisions whit walls, it changes the pov to generate the new scenario.
+**	It then calls raycaster() to generate the new image and also
+**	the mlx_put_image_to_window() to display it.
+*/
 
 int	play(t_mlx *mlx)
 {
@@ -47,6 +54,11 @@ int	play(t_mlx *mlx)
 	return (0);
 }
 
+/*
+**	When a key is pressed it changes the motion of the camera accordingly.
+**	If the pressed key is 'ESC', it calls bye() to exit the program.
+*/
+
 int	key_pressed(int key, t_mlx *mlx)
 {
 	if (key == mlx->ctr.u || key == mlx->ctr.d)
@@ -59,6 +71,10 @@ int	key_pressed(int key, t_mlx *mlx)
 		bye(mlx);
 	return (0);
 }
+
+/*
+**	When a key is released it changes the motion of the camera accordingly.
+*/
 
 int	key_released(int key, t_mlx *mlx)
 {

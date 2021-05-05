@@ -6,7 +6,7 @@
 /*   By: jpizarro <jpizarro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/17 19:56:25 by jpizarro          #+#    #+#             */
-/*   Updated: 2021/04/24 21:17:02 by jpizarro         ###   ########.fr       */
+/*   Updated: 2021/05/05 09:55:05 by jpizarro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,6 @@ typedef struct s_player
 
 typedef	struct s_raycast
 {
-//	int			**map;
 	int			mapy;
 	int			mapx;
 	double		fov;
@@ -111,24 +110,15 @@ typedef struct s_set
 	int			c;
 }			t_set;
 
-//typedef struct s_map
-//{
-////	int			dimy;
-////	int			dimx;
-////	int			**map;
-//	void		*txn;
-//	void		*txs;
-//	void		*txe;
-//	void		*txw;
-//	void		*spr;
-//}			t_map;
-
 typedef struct s_mlx
 {
+	char		**map;
+	int			mapdimy;
 	void		*mlx;
 	void		*win;
 	int			winw;
 	int			winh;
+	char		err;
 	t_img		img;
 	t_raycast	rc;
 	t_controls	ctr;
@@ -136,13 +126,36 @@ typedef struct s_mlx
 	t_set		set;
 }			t_mlx;
 
+typedef struct s_mapping
+{
+	int			dimy;
+	int			dimx;
+	char		*map;
+	char		*buff;
+	char		**g_pig;
+	char		diri;
+	char		dirj;
+	int			i;
+	int			j;
+	char		err;
+	char		py_in;
+	int			loop;
+	int			loopi;
+	int			loopj;
+}			t_mapping;
+
 int		builder(int ac, t_mlx *mlx);
 int		bye(t_mlx *mlx);
 int		dot_cub_parser(t_mlx *mlx, char *cub_path);
+int		final_free(t_mlx *mlx);
+int		free_split(int r, char **elem, int wn);
 int		key_pressed(int key, t_mlx *mlx);
 int		key_released(int key, t_mlx *mlx);
+int		map_leaks(t_mlx *mlx, t_mapping *map);
+int		mapper(t_mlx *mlx, int fd, char **line);
 int		msnprt(int fd, char *msn);
 void	paint_line(t_mlx *mlx);
+int		parse_map_line(t_mlx *mlx, int fd, char **line, t_mapping *map);
 void	pixel_push(t_mlx *mlx, int x, int y);
 int		play(t_mlx *mlx);
 int		printerror(int err);
@@ -150,6 +163,5 @@ int		raycaster(t_mlx *mlx);
 int		window_sizer(t_mlx *mlx, char **elem);
 int		texturizer(t_mlx *mlx, char **elem);
 int		colorizer(t_mlx *mlx, char **elem);
-
 
 #endif
