@@ -6,7 +6,7 @@
 /*   By: jpizarro <jpizarro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/09 08:02:12 by jpizarro          #+#    #+#             */
-/*   Updated: 2021/05/05 10:58:03 by jpizarro         ###   ########.fr       */
+/*   Updated: 2021/05/05 11:26:37 by jpizarro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ int	raycaster(t_mlx *mlx)
 //	printf("rc.rayy = %f\trc.rayx = %f\n", rc.rayy, rc.rayx);
 //	printf("rc.incy = %f\trc.incx = %f\trc.iniy = %f\trc.inix = %f\n", rc.incy, rc.incx, rc.iniy, rc.inix);
 
-		while (mlx->map[rc.mapy][rc.mapx] == '0')
+		while (mlx->map[rc.mapy][rc.mapx] == '0' || mlx->map[rc.mapy][rc.mapx] == ' ')
 		{
 			if (rc.iniy < rc.inix)
 			{

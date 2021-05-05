@@ -6,7 +6,7 @@
 /*   By: jpizarro <jpizarro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/24 20:46:08 by jpizarro          #+#    #+#             */
-/*   Updated: 2021/04/26 17:35:25 by jpizarro         ###   ########.fr       */
+/*   Updated: 2021/05/05 19:40:07 by jpizarro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,10 @@
 */
 
 #include "../cub3d.h"
+
+/*
+**	Checks whether the strings of the array are numbers.
+*/
 
 int	arenum(char **elem, char k)
 {
@@ -43,6 +47,10 @@ int	arenum(char **elem, char k)
 	return (1);
 }
 
+/*
+**	Stores the indicated size of the mlx window, always within certain limits.
+*/
+
 int	window_sizer(t_mlx *mlx, char **elem)
 {
 	int		maxw;
@@ -65,6 +73,12 @@ int	window_sizer(t_mlx *mlx, char **elem)
 	mlx->winh = (mlx->winh < minh) * minh + (mlx->winh >= minh) * mlx->winh;
 	return (1);
 }
+
+/*
+**	Receives the info for the textures, where to use them and the path
+**	to the 'xpm' file. Checks for the correct format of the image, and
+**	stores it on the corresponding variable of the mlx structure.
+*/
 
 int	texturizer(t_mlx *mlx, char **elem)
 {
@@ -90,6 +104,11 @@ int	texturizer(t_mlx *mlx, char **elem)
 	return (1);
 }
 
+/*
+**	It compose a color in RGB format, from a sting of three digits
+**	separated by ','.
+*/
+
 int get_color(char **elem, int *color)
 {
 	char	**r_g_b;
@@ -108,23 +127,26 @@ int get_color(char **elem, int *color)
 		*color += comp << (8 * (2 - i++));
 	}
 	return (free_split(1, r_g_b, 3));
-
 }
+
+/*
+**	Manages the color for the ceiling and the floor.
+**	Checks the color format, orders to compose it, and stores it
+**	either for the ceiling or the floor.
+*/
 
 int	colorizer(t_mlx *mlx, char **elem)
 {
-	int				color;
+	int	color;
 
 	color = 0;
-	if (ft_wordcount(elem[1], ',') == 3)
-	{
-		if (get_color(elem, &color) == 2)
-			return (2);
-		if (elem[0][0] == 'C')
-			mlx->set.c = color;
-		else
-			mlx->set.f = color;
-		return (1);	
-	}
-	return (msnprt(2, "Wrong color format"));
+	if (ft_wordcount(elem[1], ',') != 3)
+		return (msnprt(2, "Wrong color format"));
+	if (get_color(elem, &color) == 2)
+		return (2);
+	if (elem[0][0] == 'C')
+		mlx->set.c = color;
+	else
+		mlx->set.f = color;
+	return (1);	
 }

@@ -6,7 +6,7 @@
 /*   By: jpizarro <jpizarro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/21 12:53:14 by jpizarro          #+#    #+#             */
-/*   Updated: 2021/05/05 11:02:56 by jpizarro         ###   ########.fr       */
+/*   Updated: 2021/05/05 18:29:27 by jpizarro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,8 +77,6 @@ int		builder(int ac, t_mlx *mlx)
 {
 	set_control(mlx);
 	init_player(mlx);
-	mlx->winw = 800;
-	mlx->winh = 600;
 	mlx->mlx = mlx_init();
 	mlx->win = mlx_new_window(mlx->mlx, mlx->winw, mlx->winh, "RayCasting");
 	mlx->err = set_set(mlx);

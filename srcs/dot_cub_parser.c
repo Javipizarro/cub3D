@@ -6,7 +6,7 @@
 /*   By: jpizarro <jpizarro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/21 17:32:18 by jpizarro          #+#    #+#             */
-/*   Updated: 2021/05/04 12:07:28 by jpizarro         ###   ########.fr       */
+/*   Updated: 2021/05/05 19:40:26 by jpizarro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ int	free_split(int r, char **elem, int wn)
 {
 	while (wn--)
 	{
-//		printf("\n-------------\nliberando: %p\tcontenido: %s\n-----------------\n", elem[wn], elem[wn]);
+//	printf("\n-------------\nliberando: %p\tcontenido: %s\n-----------------\n", elem[wn], elem[wn]);
 		free (elem[wn]);
 		elem[wn] = NULL;
 	}
