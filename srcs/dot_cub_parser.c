@@ -6,31 +6,15 @@
 /*   By: jpizarro <jpizarro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/21 17:32:18 by jpizarro          #+#    #+#             */
-/*   Updated: 2021/05/05 19:40:26 by jpizarro         ###   ########.fr       */
+/*   Updated: 2021/05/09 22:27:45 by jpizarro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 /*
-**	In this file, the map is checkelemsed and set.
+**	In this file, TO COMMENT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 */
 
 #include "../cub3d.h"
-
-int	free_split(int r, char **elem, int wn)
-{
-	while (wn--)
-	{
-//	printf("\n-------------\nliberando: %p\tcontenido: %s\n-----------------\n", elem[wn], elem[wn]);
-		free (elem[wn]);
-		elem[wn] = NULL;
-	}
-	
-//	printf("\n-------------\nliberando: %p\tprincipal split\n-----------------\n", elem);
-
-	free(elem);
-	elem = NULL;
-	return (r);
-}
 
 char	checkelems(unsigned char pos)
 {
@@ -53,82 +37,81 @@ int parse_element(t_mlx *mlx, char *line)
 
 	wn = ft_wordcount(line, ' ');
 	elem = ft_split(line, ' ');
-/////////////////////////////
-//		printf("después del split de parse_element: %i\n", system("leaks cub3D"));
-/////////////////////////////
-
+	if (!elem)
+		return (msnprt(2, "Wrong .cub element allocation"));
 	if (!(checkelems(0xff)) && elem[0][0] >= '0' && elem[0][0] <= '2')
-		return (free_split(0, elem, wn));
+		return (free_split(0, elem));
 	if (wn == 3 && !(ft_strncmp(elem[0], "R", 2)) && !(checkelems(0)))
-		return (free_split(window_sizer(mlx, elem), elem, wn));
+		return (free_split(window_sizer(mlx, elem), elem));
 	else if (wn == 2 && ((!(ft_strncmp(elem[0], "NO", 3)) && !(checkelems(1)))
 		|| (!(ft_strncmp(elem[0], "SO", 3)) && !(checkelems(2)))
 		|| (!(ft_strncmp(elem[0], "EA", 3)) && !(checkelems(3)))
 		|| (!(ft_strncmp(elem[0], "WE", 3)) && !(checkelems(4)))
 		|| (!(ft_strncmp(elem[0], "S", 2)) && !(checkelems(5)))))
-		return (free_split(texturizer(mlx, elem), elem, wn));
+		return (free_split(texturizer(mlx, elem), elem));
 	else if (wn == 2 && ((!(ft_strncmp(elem[0], "F", 2)) && !(checkelems(6)))
 		|| (!(ft_strncmp(elem[0], "C", 2)) && !(checkelems(7)))))
-		return (free_split(colorizer(mlx, elem), elem, wn));
-	return (free_split(2, elem, wn));
+		return (free_split(colorizer(mlx, elem), elem));
+	return (free_split(msnprt(2, "Unrecognized line on .cub"), elem));
 }
 
-int	elements_parser(t_mlx *mlx, int fd, char **line)
+void	elements_parser(t_mlx *mlx, int fd, char **line, char *gnl)
 {
-	char	gnl;
 	char	pe;
 
 	pe = 1;
 	while (pe == 1)
 	{
-/////////////////////////////
-//		printf("antes de gnl: %i\n", system("leaks cub3D"));
-/////////////////////////////
-		gnl = get_next_line(fd, line);
-/////////////////////////////
-//		printf("después de gnl: %i\n", system("leaks cub3D"));
-/////////////////////////////
-		if (gnl == -1)
-			return (msnprt(2, "Corrupt .cub file"));
-		else if (!gnl)
-			return (msnprt(2, "Not enough elements on .cub file"));
-		if (ft_wordcount(*line, ' '))
-/////////////////////////////
-//{
-//		printf("antes de parse_element: %i\n", system("leaks cub3D"));
-/////////////////////////////
+		*gnl = get_next_line(fd, line);
+		if (*gnl == -1)
+			mlx->err = msnprt(2, "Corrupt .cub file");
+		else if (!*gnl)
+			mlx->err = (msnprt(2, "Not enough elements on .cub file"));
+		if (!mlx->err && ft_strnlen(*line, 1))
 			pe = parse_element(mlx, *line);
-/////////////////////////////
-//		printf("después de parse_element: %i\n", system("leaks cub3D"));
-//}
-/////////////////////////////
-
 		if (pe)
 		{	
 			free(*line);
 			*line = NULL;
-/////////////////////////////
-//		printf("dentro del bucle de elements_parser: %i\n", system("leaks cub3D"));
-/////////////////////////////
 		}
 		if (pe > 1)
-			return (pe);
+			mlx->err = 2;
 	}
-	printf("winw = %i, winh = %i\npathn = %s\npaths = %s\npathe = %s\npathw = %s\npathp = %s\ncolorc = %x\ncolorf = %x\n", mlx->winw, mlx->winh, mlx->set.pathn, mlx->set.paths, mlx->set.pathe, mlx->set.pathw, mlx->set.pathp, mlx->set.c, mlx->set.f);
-	return (0);
+//	printf("winw = %i, winh = %i\npathn = %s\npaths = %s\npathe = %s\npathw = %s\npathp = %s\ncolorc = %x\ncolorf = %x\n", mlx->winw, mlx->winh, mlx->set.pathn, mlx->set.paths, mlx->set.pathe, mlx->set.pathw, mlx->set.pathp, mlx->set.c, mlx->set.f);
 }
 
-int	dot_cub_parser(t_mlx *mlx, char *cub_path)
+void	check_eof(t_mlx *mlx, int fd, char **line, char *gnl)
+{
+	while (*gnl == 1 && !(ft_strnlen(*line, 1)))
+	{
+		free(*line);
+		*line = NULL;
+		*gnl = get_next_line(fd, line);
+	}
+	free(*line);
+	*line = NULL;
+	if (*gnl < 0)
+		mlx->err = msnprt(2, "Corrupt .cub file");
+	if (*gnl > 0)
+		mlx->err = msnprt(2, "Nothing allowed after map on file .cub");
+}
+
+void	dot_cub_parser(t_mlx *mlx, char *cub_path)
 {
 	int		fd;
 	char	*line;
-	int		r;
+	char	gnl;
 
 	fd = open(cub_path, O_RDONLY);
-	if (fd < 0)
-		return (msnprt(2, "Map file does not exist"));
-	r = elements_parser(mlx, fd, &line);
-	if (r)
-		return (r);
-	return (mapper(mlx, fd, &line));
+	mlx->err = 2 * (fd < 0);
+	if (mlx->err)
+		msnprt(2, "Map file does not exist");
+	else
+		elements_parser(mlx, fd, &line, &gnl);
+	if (!mlx->err)
+		mapper(mlx, fd, &line, &gnl);
+	if (!mlx->err)
+		check_eof(mlx, fd, &line, &gnl);
+	if(close(fd))
+		mlx->err = msnprt(2, "Problem closing .cub file");
 }

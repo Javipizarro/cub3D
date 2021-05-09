@@ -6,7 +6,7 @@
 /*   By: jpizarro <jpizarro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/24 20:46:08 by jpizarro          #+#    #+#             */
-/*   Updated: 2021/05/05 19:40:07 by jpizarro         ###   ########.fr       */
+/*   Updated: 2021/05/08 13:34:33 by jpizarro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,16 +117,16 @@ int get_color(char **elem, int *color)
 
 	r_g_b = ft_split(elem[1], ',');
 	if (arenum(r_g_b, 'c') == 2)
-		return (free_split(2, r_g_b, 3));
+		return (free_split(2, r_g_b));
 	i = 0;
 	while (i < 3)
 	{
 		comp = atoi(r_g_b[i]);
 		if (comp > 255)
-			return (free_split(msnprt(2, "Wrong color component"), r_g_b, 3));
+			return (free_split(msnprt(2, "Wrong color component"), r_g_b));
 		*color += comp << (8 * (2 - i++));
 	}
-	return (free_split(1, r_g_b, 3));
+	return (free_split(1, r_g_b));
 }
 
 /*

@@ -6,7 +6,7 @@
 /*   By: jpizarro <jpizarro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/26 07:29:37 by jpizarro          #+#    #+#             */
-/*   Updated: 2021/05/05 10:58:03 by jpizarro         ###   ########.fr       */
+/*   Updated: 2021/05/09 22:13:27 by jpizarro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,6 @@ int	player_set(t_mlx *mlx, t_mapping *map, char dir, char **line)
 {
 	if (map->py_in || dir == 'X')
 	{
-		free(*line);
-		*line = NULL;
 		if (map->py_in)
 			return (msnprt(2, "More than one player on map"));
 		return (msnprt(2, "No player on the map"));
@@ -61,10 +59,8 @@ int	another_line(t_mapping *map, int fd, char **line)
 	*line = NULL;
 	map->dimx = map->dimx * (map->dimx >= map->i)
 	+ map->i * (map->i > map->dimx);
-	map->err = get_next_line(fd, line);
-	if (map->err == -1)
-		return (msnprt(2, "Corrupt .cub file"));
-	return (map->err);
+	map->gnl = get_next_line(fd, line);
+	return (map->gnl);
 }
 
 /*
@@ -73,12 +69,14 @@ int	another_line(t_mapping *map, int fd, char **line)
 **	Measures the map. And finds the player's start position on the map.
 */
 
-int	parse_map_lines(t_mlx *mlx, int fd, char **line, t_mapping *map)
+void	parse_map_lines(t_mlx *mlx, int fd, char **line, t_mapping *map)
 {
 	map->dimy = 0;
 	map->dimx = 0;
 	map->map = ft_strdup("");
-	while (ft_wordcount(*line, ' ') && ++map->dimy)
+	if (!map->map)
+		mlx->err = msnprt(2, "Problem with memory allocation for map->map");
+	while (!mlx->err && ft_strnlen(*line, 1) && ++map->dimy)
 	{
 		map->i = 0;
 		while ((*line)[map->i])
@@ -87,15 +85,15 @@ int	parse_map_lines(t_mlx *mlx, int fd, char **line, t_mapping *map)
 				|| (((*line)[map->i] == 'N' || (*line)[map->i] == 'S'
 				|| (*line)[map->i] == 'E' || (*line)[map->i] == 'W')
 				&&  (!(player_set(mlx, map, (*line)[map->i], line))))))
-				return (msnprt(2, "Invalid map configuration"));
-			else
-				map->i++;
-		if (another_line(map, fd, line) == 2)
-			return (2);
+				mlx->err = msnprt(2, "Invalid map configuration");
+			else if ((*line)[map->i++] == '2')
+				mlx->map.sp_num++;
+		if (!mlx->err && another_line(map, fd, line) < 0)
+			mlx->err = msnprt(2, "Corrupt .cub file");
 	}
-	if (!map->py_in)
-		player_set(mlx, map, 'X', line);
-	return (map->err);
+	if (!mlx->err && !map->py_in)
+		mlx->err = player_set(mlx, map, 'X', line);
+	mlx->map.dimy = map->dimy;
 }
 
 /*
@@ -111,7 +109,7 @@ char	**map_builder(t_mapping *map, char c)
 	size_t	var[3];
 
 	mem = malloc(sizeof(char *) * (map->dimy + 1));
-	if (!map->map || !mem)
+	if (!mem)
 		return (NULL);
 	var[1] = 0;
 	var[2] = 0;
@@ -140,15 +138,30 @@ char	**map_builder(t_mapping *map, char c)
 **	Then it orders to build and leak-proofs the map final version.
 */
 
-int	mapper(t_mlx *mlx, int fd, char **line)
+void	mapper(t_mlx *mlx, int fd, char **line, char *gnl)
 {
 	t_mapping map;
 	
 	map.py_in = 0;
-	map.err = parse_map_lines(mlx, fd, line, &map);
-	if (map.err == 2)
-		return (2);
-	while (!(ft_wordcount(*line, ' ')) && map.err == 1)
+	map.gnl = *gnl;
+	parse_map_lines(mlx, fd, line, &map);
+	if (!mlx->err)
+		mlx->map.map = map_builder(&map, '\n');
+	if (!mlx->err)
+		map_leaks(mlx, &map);
+	if (mlx->err && line && *line)
+	{
+		free (*line);
+		*line = NULL;
+	}
+	*gnl = map.gnl;
+	free_mapping(&map);
+}
+
+/*
+	if (mlx->err == 2)
+		return;
+	while (!(ft_wordcount(*line, ' ')) && mlx->err == 1)
 	{
 		free(*line);
 		*line = NULL;
@@ -156,12 +169,10 @@ int	mapper(t_mlx *mlx, int fd, char **line)
 	}
 		free(*line);
 		*line = NULL;
-	if (map.err < 0)
+	if (mlx->err < 0)
 		return (msnprt(2, "Corrupt .cub file"));
-	if (map.err > 0)
+	if (mlx->err > 0)
 		return (msnprt(2, "Nothing allowed after map on file .cub"));
-	mlx->map = map_builder(&map, '\n');
-	if (map_leaks(mlx, &map))
-		return (2);
 	return (0);
 }
+*/

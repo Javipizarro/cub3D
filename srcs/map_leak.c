@@ -6,7 +6,7 @@
 /*   By: jpizarro <jpizarro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/26 18:01:58 by jpizarro          #+#    #+#             */
-/*   Updated: 2021/05/05 10:00:15 by jpizarro         ###   ########.fr       */
+/*   Updated: 2021/05/09 21:32:07 by jpizarro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,8 +59,8 @@ void guinea_pig_map(t_mlx *mlx, t_mapping *map)
 	while (map->i < map->dimy)
 	{
 		map->g_pig[map->i] = ft_charlloc(sizeof(char) * map->dimx, ' ');
-		ft_memcpy(map->g_pig[map->i], mlx->map[map->i],
-		ft_strlen(mlx->map[map->i]));
+		ft_memcpy(map->g_pig[map->i], mlx->map.map[map->i],
+		ft_strlen(mlx->map.map[map->i]));
 		map->i++;
 	}
 	map->g_pig[map->i] = NULL;
@@ -70,11 +70,10 @@ void guinea_pig_map(t_mlx *mlx, t_mapping *map)
 **	Manages the leak tests for the map.
 */
 
-int	map_leaks(t_mlx *mlx, t_mapping *map)
+void	map_leaks(t_mlx *mlx, t_mapping *map)
 {
 	guinea_pig_map(mlx, map);
-	if (find_leaks(map, mlx->py.posx, mlx->py.posy))
-		return (free_split(2, map->g_pig, map->dimy));
+	mlx->err = find_leaks(map, mlx->py.posx, mlx->py.posy);
 	
 //	printf("start pos at %f, %f\n", mlx->py.posx, mlx->py.posy);
 //	map->err = wall_cheker(map);
@@ -89,6 +88,4 @@ int	map_leaks(t_mlx *mlx, t_mapping *map)
 //		printf("línea de mapa:##%s##\n", mlx->map[i++]);
 //	printf("dimx = %d\n", map->dimx);
 	////////////////////////
-	mlx->mapdimy = map->dimy;
-	return (free_split(0, map->g_pig, map->dimy));
 }

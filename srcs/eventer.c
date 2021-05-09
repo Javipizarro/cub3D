@@ -6,7 +6,7 @@
 /*   By: jpizarro <jpizarro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/09 07:58:01 by jpizarro          #+#    #+#             */
-/*   Updated: 2021/05/05 19:07:04 by jpizarro         ###   ########.fr       */
+/*   Updated: 2021/05/08 11:27:39 by jpizarro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,14 +57,14 @@ int	play(t_mlx *mlx)
 	oldx = mlx->py.posx;
 	oldy = mlx->py.posy;
 	new_player_pos(mlx);
-	if (!(mlx->map[(int)oldy][(int)mlx->py.posx] == '0'
-	|| mlx->map[(int)oldy][(int)mlx->py.posx] == ' '))
+	if (!(mlx->map.map[(int)oldy][(int)mlx->py.posx] == '0'
+	|| mlx->map.map[(int)oldy][(int)mlx->py.posx] == ' '))
 		mlx->py.posx = oldx;
-	if (!(mlx->map[(int)(mlx->py.posy + 0)][(int)oldx] == '0'
-	|| mlx->map[(int)(mlx->py.posy + 0)][(int)oldx] == ' '))
+	if (!(mlx->map.map[(int)(mlx->py.posy + 0)][(int)oldx] == '0'
+	|| mlx->map.map[(int)(mlx->py.posy + 0)][(int)oldx] == ' '))
 		mlx->py.posy = oldy;
-	if (!(mlx->map[(int)(mlx->py.posy + 0)][(int)mlx->py.posx] == '0'
-	|| mlx->map[(int)(mlx->py.posy + 0)][(int)mlx->py.posx] == ' '))
+	if (!(mlx->map.map[(int)(mlx->py.posy + 0)][(int)mlx->py.posx] == '0'
+	|| mlx->map.map[(int)(mlx->py.posy + 0)][(int)mlx->py.posx] == ' '))
 	{
 		mlx->py.posx = oldx;
 		mlx->py.posy = oldy;

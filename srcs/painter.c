@@ -6,7 +6,7 @@
 /*   By: jpizarro <jpizarro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/09 08:08:41 by jpizarro          #+#    #+#             */
-/*   Updated: 2021/05/05 18:48:26 by jpizarro         ###   ########.fr       */
+/*   Updated: 2021/05/06 18:47:29 by jpizarro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,8 @@ t_img	*pick_txtr(t_mlx *mlx)
 }
 
 /*
-**	
+**	Paint a vertical line with the ceilling color, the wall texture
+**	and the floor color.
 */
 
 void	paint_line(t_mlx *mlx)

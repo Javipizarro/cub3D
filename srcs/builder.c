@@ -6,7 +6,7 @@
 /*   By: jpizarro <jpizarro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/21 12:53:14 by jpizarro          #+#    #+#             */
-/*   Updated: 2021/05/05 18:29:27 by jpizarro         ###   ########.fr       */
+/*   Updated: 2021/05/09 19:51:35 by jpizarro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,18 +14,15 @@
 
 void	set_control(t_mlx *mlx)
 {
-	t_controls	ctr;
-
-	ctr.u = 13;
-	ctr.d = 1;
-	ctr.l = 0;
-	ctr.r = 2;
-	ctr.tl = 123;
-	ctr.tr = 124;
-	ctr.esc = 53;
-	ctr.speed = 0.1;
-	ctr.turn = 0.05;
-	mlx->ctr = ctr;
+	mlx->ctr.u = 13;
+	mlx->ctr.d = 1;
+	mlx->ctr.l = 0;
+	mlx->ctr.r = 2;
+	mlx->ctr.tl = 123;
+	mlx->ctr.tr = 124;
+	mlx->ctr.esc = 53;
+	mlx->ctr.speed = 0.1;
+	mlx->ctr.turn = 0.05;
 }
 
 void	init_player(t_mlx *mlx)
@@ -65,7 +62,7 @@ int	set_set(t_mlx *mlx)
 int	bye(t_mlx *mlx)
 {
 	mlx_destroy_window(mlx->mlx, mlx->win);
-	final_free(mlx);
+	free_mlx(mlx);
 	if (!(mlx->err))
 		msnprt(1, "Thanks for playing!!!");
 	system("leaks cub3D");
@@ -80,6 +77,7 @@ int		builder(int ac, t_mlx *mlx)
 	mlx->mlx = mlx_init();
 	mlx->win = mlx_new_window(mlx->mlx, mlx->winw, mlx->winh, "RayCasting");
 	mlx->err = set_set(mlx);
+	mlx->err += set_rc_constants(mlx);
 	if (mlx->err)
 	{
 		bye(mlx);
