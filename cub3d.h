@@ -6,7 +6,7 @@
 /*   By: jpizarro <jpizarro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/17 19:56:25 by jpizarro          #+#    #+#             */
-/*   Updated: 2021/05/10 12:22:40 by jpizarro         ###   ########.fr       */
+/*   Updated: 2021/05/10 13:02:54 by jpizarro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -159,10 +159,10 @@ typedef struct s_mapping
 	int			loopj;
 }			t_mapping;
 
+int		another_line(t_mapping *map, int fd, char **line);
 int		builder(int ac, t_mlx *mlx);
 int		bye(t_mlx *mlx);
 void	dot_cub_parser(t_mlx *mlx, char *cub_path);
-int		find_map_leaks(t_mapping *map, int i, int j);
 int		free_mapping(t_mapping *map);
 int		free_mlx(t_mlx *mlx);
 int		free_split(int ret, char **split);
@@ -176,6 +176,7 @@ void	paint_line(t_mlx *mlx);
 int		parse_map_line(t_mlx *mlx, int fd, char **line, t_mapping *map);
 void	pixel_push(t_mlx *mlx, int x, int y);
 int		play(t_mlx *mlx);
+int		player_set(t_mlx *mlx, t_mapping *map, char dir, char **line);
 int		printerror(int err);
 int		raycaster(t_mlx *mlx);
 int		set_rc_constants(t_mlx *mlx);

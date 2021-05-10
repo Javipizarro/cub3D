@@ -6,61 +6,33 @@
 /*   By: jpizarro <jpizarro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/26 07:29:37 by jpizarro          #+#    #+#             */
-/*   Updated: 2021/05/10 12:23:31 by jpizarro         ###   ########.fr       */
+/*   Updated: 2021/05/10 13:01:28 by jpizarro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../cub3d.h"
 
 /*
-**	Notices whether none, one, or more than one player has been found.
-**	Stores the player starting position and the direction it faces.
+**	Checks whether the ortogonal tiles surrounding the player starting
+**	position are reachable or walls. If they are reachable, the algorithm
+**	restarts on each of them until there are no more, so the map is closed
+**	or we exceed the limits of the map so there is a leak.
 */
 
-int	player_set(t_mlx *mlx, t_mapping *map, char dir, char **line)
+int	find_map_leaks(t_mapping *map, int i, int j)
 {
-	if (map->py_in || dir == 'X')
-	{
-		if (map->py_in)
-			return (msnprt(2, "More than one player on map"));
-		return (msnprt(2, "No player on the map"));
-	}
-	mlx->py.posx = (double)map->i + 0.5;
-	mlx->py.posy = (double)map->dimy - 0.5;
-	if (dir == 'N' || dir == 'S')
-		mlx->py.dirx = 0;
-	else if (dir == 'E' || dir == 'W')
-		mlx->py.diry = 0;
-	if (dir == 'N')
-		mlx->py.diry = -1;
-	else if (dir == 'S')
-		mlx->py.diry = 1;
-	else if (dir == 'E')
-		mlx->py.dirx = 1;
-	else if (dir == 'W')
-		mlx->py.dirx = -1;
-	map->py_in = dir;
-	(*line)[map->i] = '0';
-	return(0);
-}
-
-/*
-**	Mounts the new line in the one string malloc, measures it to return the
-**	map-x-dimension. Frees the line and delivers another to be checked.
-*/
-
-int	another_line(t_mapping *map, int fd, char **line)
-{
-	map->buff = map->map;
-	map->map = ft_strnewline(map->buff, *line);
-	free(map->buff);
-	map->buff = NULL;
-	free(*line);
-	*line = NULL;
-	map->dimx = map->dimx * (map->dimx >= map->i)
-	+ map->i * (map->i > map->dimx);
-	map->gnl = get_next_line(fd, line);
-	return (map->gnl);
+	map->g_pig[j][i] = '1';
+	if (!i || !j || i == map->dimx - 1|| j == map->dimy - 1)
+		return (msnprt(2, "The map is open"));
+	if (map->g_pig[j - 1][i] != '1' && find_map_leaks(map, i, j - 1))
+		return (2);
+	if (map->g_pig[j][i + 1] != '1' && find_map_leaks(map, i + 1, j))
+		return (2);
+	if (map->g_pig[j + 1][i] != '1' && find_map_leaks(map, i, j + 1))
+		return (2);
+	if (map->g_pig[j][i - 1] != '1' && find_map_leaks(map, i - 1, j))
+		return (2);
+	return(0);	
 }
 
 /*
@@ -161,22 +133,3 @@ void	mapper(t_mlx *mlx, int fd, char **line, char *gnl)
 	*gnl = map.gnl;
 	free_mapping(&map);
 }
-
-/*
-	if (mlx->err == 2)
-		return;
-	while (!(ft_wordcount(*line, ' ')) && mlx->err == 1)
-	{
-		free(*line);
-		*line = NULL;
-		map.err = get_next_line(fd, line);
-	}
-		free(*line);
-		*line = NULL;
-	if (mlx->err < 0)
-		return (msnprt(2, "Corrupt .cub file"));
-	if (mlx->err > 0)
-		return (msnprt(2, "Nothing allowed after map on file .cub"));
-	return (0);
-}
-*/

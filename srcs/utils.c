@@ -6,7 +6,7 @@
 /*   By: jpizarro <jpizarro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/08 12:55:19 by jpizarro          #+#    #+#             */
-/*   Updated: 2021/05/09 22:27:27 by jpizarro         ###   ########.fr       */
+/*   Updated: 2021/05/10 12:58:48 by jpizarro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,22 +85,6 @@ int free_mlx(t_mlx *mlx)
 	if (mlx->map.map)
 		free_split(0, mlx->map.map);
 	fresh_mlx_vars(mlx);
-	return (0);
-}
-
-/*
-**	Check whether the pointers allocated when mapping are in use,
-**	if so, it liberates them, and set them to NULL.
-*/
-
-int	free_mapping(t_mapping *map)
-{
-	if (map->map)
-		free(map->map);
-	if (map->g_pig)
-		free_split(2, map->g_pig);
-	map->map = NULL;
-	map->g_pig = NULL;
 	return (0);
 }
 

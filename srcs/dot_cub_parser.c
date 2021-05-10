@@ -6,7 +6,7 @@
 /*   By: jpizarro <jpizarro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/21 17:32:18 by jpizarro          #+#    #+#             */
-/*   Updated: 2021/05/10 11:20:44 by jpizarro         ###   ########.fr       */
+/*   Updated: 2021/05/10 13:01:30 by jpizarro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,6 @@ void	elements_parser(t_mlx *mlx, int fd, char **line, char *gnl)
 		if (pe > 1)
 			mlx->err = 2;
 	}
-//	printf("winw = %i, winh = %i\npathn = %s\npaths = %s\npathe = %s\npathw = %s\npathp = %s\ncolorc = %x\ncolorf = %x\n", mlx->winw, mlx->winh, mlx->set.pathn, mlx->set.paths, mlx->set.pathe, mlx->set.pathw, mlx->set.pathp, mlx->set.c, mlx->set.f);
 }
 
 void	check_eof(t_mlx *mlx, int fd, char **line, char *gnl)
