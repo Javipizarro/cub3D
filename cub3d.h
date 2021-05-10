@@ -6,7 +6,7 @@
 /*   By: jpizarro <jpizarro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/17 19:56:25 by jpizarro          #+#    #+#             */
-/*   Updated: 2021/05/09 22:13:42 by jpizarro         ###   ########.fr       */
+/*   Updated: 2021/05/10 12:22:40 by jpizarro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -162,13 +162,14 @@ typedef struct s_mapping
 int		builder(int ac, t_mlx *mlx);
 int		bye(t_mlx *mlx);
 void	dot_cub_parser(t_mlx *mlx, char *cub_path);
+int		find_map_leaks(t_mapping *map, int i, int j);
 int		free_mapping(t_mapping *map);
 int		free_mlx(t_mlx *mlx);
 int		free_split(int ret, char **split);
 void	fresh_mlx_vars(t_mlx *mlx);
+void	guinea_pig_map(t_mlx *mlx, t_mapping *map);
 int		key_pressed(int key, t_mlx *mlx);
 int		key_released(int key, t_mlx *mlx);
-void	map_leaks(t_mlx *mlx, t_mapping *map);
 void	mapper(t_mlx *mlx, int fd, char **line, char *gnl);
 int		msnprt(int fd, char *msn);
 void	paint_line(t_mlx *mlx);

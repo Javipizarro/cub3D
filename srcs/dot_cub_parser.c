@@ -6,7 +6,7 @@
 /*   By: jpizarro <jpizarro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/21 17:32:18 by jpizarro          #+#    #+#             */
-/*   Updated: 2021/05/09 22:27:45 by jpizarro         ###   ########.fr       */
+/*   Updated: 2021/05/10 11:20:44 by jpizarro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ int parse_element(t_mlx *mlx, char *line)
 	elem = ft_split(line, ' ');
 	if (!elem)
 		return (msnprt(2, "Wrong .cub element allocation"));
-	if (!(checkelems(0xff)) && elem[0][0] >= '0' && elem[0][0] <= '2')
+	if (!(checkelems(0xff)) && *elem && elem[0][0] >= '0' && elem[0][0] <= '2')
 		return (free_split(0, elem));
 	if (wn == 3 && !(ft_strncmp(elem[0], "R", 2)) && !(checkelems(0)))
 		return (free_split(window_sizer(mlx, elem), elem));

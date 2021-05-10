@@ -6,7 +6,7 @@
 /*   By: jpizarro <jpizarro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/26 07:29:37 by jpizarro          #+#    #+#             */
-/*   Updated: 2021/05/09 22:13:27 by jpizarro         ###   ########.fr       */
+/*   Updated: 2021/05/10 12:23:31 by jpizarro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ void	parse_map_lines(t_mlx *mlx, int fd, char **line, t_mapping *map)
 	while (!mlx->err && ft_strnlen(*line, 1) && ++map->dimy)
 	{
 		map->i = 0;
-		while ((*line)[map->i])
+		while (!mlx->err && (*line)[map->i])
 			if (!((((*line)[map->i] >= '0' && (*line)[map->i] <= '2')
 				|| (*line)[map->i] == ' ')
 				|| (((*line)[map->i] == 'N' || (*line)[map->i] == 'S'
@@ -142,13 +142,17 @@ void	mapper(t_mlx *mlx, int fd, char **line, char *gnl)
 {
 	t_mapping map;
 	
+	map.map = NULL;
+	map.g_pig = NULL;
 	map.py_in = 0;
 	map.gnl = *gnl;
 	parse_map_lines(mlx, fd, line, &map);
 	if (!mlx->err)
 		mlx->map.map = map_builder(&map, '\n');
 	if (!mlx->err)
-		map_leaks(mlx, &map);
+		guinea_pig_map(mlx, &map);
+	if (!mlx->err)
+		mlx->err = find_map_leaks(&map, mlx->py.posx, mlx->py.posy);
 	if (mlx->err && line && *line)
 	{
 		free (*line);

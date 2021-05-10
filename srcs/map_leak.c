@@ -6,7 +6,7 @@
 /*   By: jpizarro <jpizarro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/26 18:01:58 by jpizarro          #+#    #+#             */
-/*   Updated: 2021/05/09 21:32:07 by jpizarro         ###   ########.fr       */
+/*   Updated: 2021/05/10 12:21:25 by jpizarro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,24 +23,18 @@
 **	or we exceed the limits of the map so there is a leak.
 */
 
-int	find_leaks(t_mapping *map, int i, int j)
+int	find_map_leaks(t_mapping *map, int i, int j)
 {
 	map->g_pig[j][i] = '1';
-/////////////////////////////////
-//	int k = 0;
-//	while (map->g_pig[k])
-//		printf("línea de mapa:##%s##\n", map->g_pig[k++]);
-//	printf("\n");
-/////////////////////////////////
 	if (!i || !j || i == map->dimx - 1|| j == map->dimy - 1)
 		return (msnprt(2, "The map is open"));
-	if (map->g_pig[j - 1][i] != '1' && find_leaks(map, i, j - 1))
+	if (map->g_pig[j - 1][i] != '1' && find_map_leaks(map, i, j - 1))
 		return (2);
-	if (map->g_pig[j][i + 1] != '1' && find_leaks(map, i + 1, j))
+	if (map->g_pig[j][i + 1] != '1' && find_map_leaks(map, i + 1, j))
 		return (2);
-	if (map->g_pig[j + 1][i] != '1' && find_leaks(map, i, j + 1))
+	if (map->g_pig[j + 1][i] != '1' && find_map_leaks(map, i, j + 1))
 		return (2);
-	if (map->g_pig[j][i - 1] != '1' && find_leaks(map, i - 1, j))
+	if (map->g_pig[j][i - 1] != '1' && find_map_leaks(map, i - 1, j))
 		return (2);
 	return(0);	
 }
@@ -56,7 +50,9 @@ void guinea_pig_map(t_mlx *mlx, t_mapping *map)
 {
 	map->i = 0;
 	map->g_pig = malloc(sizeof(char *) * (map->dimy + 1));
-	while (map->i < map->dimy)
+	if (!map->g_pig)
+		mlx->err = msnprt(2, "Guinea Pig Map malloc problem");
+	while (!mlx->err && map->i < map->dimy)
 	{
 		map->g_pig[map->i] = ft_charlloc(sizeof(char) * map->dimx, ' ');
 		ft_memcpy(map->g_pig[map->i], mlx->map.map[map->i],
@@ -64,28 +60,4 @@ void guinea_pig_map(t_mlx *mlx, t_mapping *map)
 		map->i++;
 	}
 	map->g_pig[map->i] = NULL;
-}
-
-/*
-**	Manages the leak tests for the map.
-*/
-
-void	map_leaks(t_mlx *mlx, t_mapping *map)
-{
-	guinea_pig_map(mlx, map);
-	mlx->err = find_leaks(map, mlx->py.posx, mlx->py.posy);
-	
-//	printf("start pos at %f, %f\n", mlx->py.posx, mlx->py.posy);
-//	map->err = wall_cheker(map);
-//
-	////////////////////////
-	int i = 0;
-	while (map->g_pig[i])
-		printf("línea de mapa:##%s##\n", map->g_pig[i++]);
-		printf("NO LEAKS ON MAP\n");
-//	printf("start at %i, %i, whit direction %c\n", pos[0], pos[1], map->g_pig[pos[1]][pos[0]]);
-//	while (mlx->map[i])
-//		printf("línea de mapa:##%s##\n", mlx->map[i++]);
-//	printf("dimx = %d\n", map->dimx);
-	////////////////////////
 }
