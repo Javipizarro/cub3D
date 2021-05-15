@@ -6,7 +6,7 @@
 /*   By: jpizarro <jpizarro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/17 19:56:25 by jpizarro          #+#    #+#             */
-/*   Updated: 2021/05/15 09:55:08 by jpizarro         ###   ########.fr       */
+/*   Updated: 2021/05/15 19:49:33 by jpizarro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,20 @@ typedef struct s_player
 	char		move[2];
 	char		spin;
 }			t_player;
+
+typedef struct s_paint_sprites
+{
+	double		sp_py_dx;
+	double		sp_py_dy;
+	double		det_inv;
+	double		sp_py_dir;
+	double		sp_py_cam;
+	int			sp_dimx;
+	int			sp_dimy;
+	int			sp_inix;
+	int			sp_col;
+	int			sp_row;
+}			t_paint_sprites;
 
 typedef struct s_sprite
 {

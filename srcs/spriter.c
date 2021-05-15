@@ -6,7 +6,7 @@
 /*   By: jpizarro <jpizarro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/08 12:30:30 by jpizarro          #+#    #+#             */
-/*   Updated: 2021/05/15 16:07:33 by jpizarro         ###   ########.fr       */
+/*   Updated: 2021/05/15 20:12:00 by jpizarro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,85 +93,72 @@ void	return_sprites_to_map(t_mlx *mlx)
 //	/////////////
 }
 
+/*
+**	Changes the reference base x and y to the cam and dir.
+**	Also dimensions and situates the sprites in the window.
+*/
+
+void	change_base(t_paint_sprites *psp, t_mlx *mlx, int i)
+{
+	psp->sp_py_dx = mlx->rc.sprites[i].x + 0.5 - mlx->py.posx;
+	psp->sp_py_dy = mlx->rc.sprites[i].y + 0.5 - mlx->py.posy;
+	psp->det_inv = 1 / (mlx->rc.camx * mlx->py.diry
+	- mlx->rc.camy * mlx->py.dirx);
+	psp->sp_py_cam = (mlx->py.dirx * psp->sp_py_dy
+	- mlx->py.diry * psp->sp_py_dx)	* psp->det_inv;
+	psp->sp_py_dir = (mlx->rc.camx * psp->sp_py_dy
+	- mlx->rc.camy * psp->sp_py_dx)	* psp->det_inv;
+	psp->sp_dimy = mlx->winh / psp->sp_py_dir;
+	psp->sp_dimx = mlx->set.sp.dimx * psp->sp_dimy / mlx->set.sp.dimy;
+	psp->sp_inix = (((int)((1 - psp->sp_py_cam / psp->sp_py_dir)
+	* (mlx->winw - 1)) - psp->sp_dimx) / 2);
+}
+
+/*
+**	Calculates what parts of the current spray are hidden,
+**	and paint the rest.
+*/
+
+void	paint_this_sprite(t_mlx *mlx, t_paint_sprites *psp)
+{
+	int i;
+	int j;
+	i = psp->sp_inix * (psp->sp_inix > 0);
+	while (i < psp->sp_inix + psp->sp_dimx && i < mlx->winw)
+	{	
+		if (mlx->rc.dist[i] < psp->sp_py_dir && i++)
+			continue;
+		j = (mlx->winh > psp->sp_dimy) * (mlx->winh - psp->sp_dimy) / 2;
+		while (j < (psp->sp_dimy + mlx->winh) / 2 && j < mlx->winh)
+		{
+			psp->sp_col = (int)((mlx->set.sp.dimx - 1)
+			* (i - psp->sp_inix) / psp->sp_dimx);
+			psp->sp_row = (int)((mlx->set.sp.dimy - 1)
+			* (j - (mlx->winh - psp->sp_dimy) / 2) / psp->sp_dimy);
+			mlx->rc.color = *(unsigned*)(mlx->set.sp.addr + (psp->sp_row
+			* mlx->set.sp.dimx + psp->sp_col) * mlx->set.sp.bpp / 8);
+			if (mlx->rc.color)
+				pixel_push(mlx, i, j);
+			j++;
+		}
+		i++;
+	}
+}
+
+/*
+**	Manages the proccess of painting all the sprays that are on screen.
+*/
+
 void	paint_sprites(t_mlx *mlx)
 {
+	t_paint_sprites	psp;
 	int		i;
-	double	sp_py_x;
-	double	sp_py_y;
-	double	det_inv;
-	double	sp_py_dir;
-	double	sp_py_cam;
-	double	sp_horpos;
-	int		sp_height;
-	int		sp_width;
-	int		sp_ver_ini;
-	int		sp_ver_end;
-	int		sp_hor_ini;
-	int		sp_hor_end;
-
 
 	i = 0;
 	while (i < mlx->map.sp_num && mlx->rc.sprites[i].dist)
 	{
-//	
-		sp_py_x = mlx->rc.sprites[i].x + 0.5 - mlx->py.posx;
-		sp_py_y = mlx->rc.sprites[i].y + 0.5 - mlx->py.posy;
-		
-//	Cambiamos el sistema de referencia a los ejes dirección-pantalla
-//	Por qué corrige con el inverso del determinante????????????
-		det_inv = 1 / (mlx->rc.camx * mlx->py.diry - mlx->rc.camy * mlx->py.dirx);
-//		sp_py_dir = (mlx->py.diry * sp_py_x - mlx->py.dirx * sp_py_y) * det_inv;
-//		sp_py_cam = (mlx->rc.camx * sp_py_y - mlx->rc.camy *sp_py_x) * det_inv;
-		sp_py_cam = (mlx->py.dirx * sp_py_y - mlx->py.diry * sp_py_x) * det_inv;
-		sp_py_dir = (mlx->rc.camx * sp_py_y - mlx->rc.camy * sp_py_x) * det_inv;
-//		printf("sp_py_x = %f, sp_py_y = %f, sp_py_cam = %f, sp_py_dir = %f\n", sp_py_x, sp_py_y, sp_py_cam, sp_py_dir);
-//	Calculamos la posición horizontal en pantalla
-		sp_horpos = (1 - sp_py_cam / sp_py_dir) * (mlx->winw - 1) / 2;
-//	Calculamos la altura del sprite en pantalla
-		sp_height = mlx->winh / sp_py_dir;
-//	Dónde comenzar y acabar de pintar el sprite
-		sp_ver_ini = (int)((mlx->winh - sp_height) / 2);
-		sp_ver_end = (int)((mlx->winh + sp_height) / 2);
-//	Ancho del sprite
-		sp_width = mlx->set.sp.dimx * sp_height / mlx->set.sp.dimy;
-		sp_hor_ini = (int)(sp_horpos - sp_width / 2);
-		sp_hor_end = (int)(sp_horpos + sp_width / 2);
-//	Pintamos el sprite
-		int k;	//	Debería ser i, pero de momento es lo que hay
-		int j;
-		int	sp_col;
-		int	sp_row;
-		t_img	*txtr;
-
-		txtr = &mlx->set.sp;
-		k = sp_hor_ini * (sp_hor_ini > 0);
-		while (k < sp_hor_ini + sp_width && k < mlx->winw)
-		{	
-			if (mlx->rc.dist[k] < mlx->rc.sprites[i].dist && k++)
-				continue;
-			j = (mlx->winh > sp_height) * (mlx->winh - sp_height) / 2;
-			while (j < (sp_height + mlx->winh) / 2 && j < mlx->winh)
-			{
-				// En qué columna caigo en la imagen .xpm del sprite
-				sp_col = (int)((mlx->set.sp.dimx - 1) * (k - sp_hor_ini) / sp_width);
-				// En qué fila caigo en la imagen .xpm del sprite
-				sp_row = (int)((mlx->set.sp.dimy - 1) * (j - sp_ver_ini) / sp_height);
-//				if (mlx->err)
-					if (sp_col < 0 || sp_row < 0 || sp_col >= mlx->set.sp.dimx || sp_row >= mlx->set.sp.dimy)
-//					{
-//						mlx->err = 0;
-						printf("sp_col = %d, sp_row = %d\t", sp_col, sp_row); 
-//					}
-				mlx->rc.color = *(unsigned*)(txtr->addr + (sp_row * txtr->dimx + sp_col) * txtr->bpp / 8);
-			//	mlx->rc.color = 0x444444;
-				if (mlx->rc.color)
-					pixel_push(mlx, k, j);
-				j++;
-			}
-			k++;
-		}
+		change_base(&psp, mlx, i);
+		paint_this_sprite(mlx, &psp);
 		i++;
 	}
-
-
 }
