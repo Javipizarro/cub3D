@@ -6,7 +6,7 @@
 /*   By: jpizarro <jpizarro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/17 19:56:25 by jpizarro          #+#    #+#             */
-/*   Updated: 2021/05/10 13:02:54 by jpizarro         ###   ########.fr       */
+/*   Updated: 2021/05/14 22:38:25 by jpizarro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,17 +23,6 @@
 //# include "libs/mathft/mathft.h"
 # include "libs/get_next_line/get_next_line.h"
 # include <math.h>
-
-
-
-//typedef struct s_img
-//{
-//	void		*ptr;
-//	char		*addr;
-//	int			bpp;
-//	int			lnlen;
-//	int			endian;
-//}			t_img;
 
 typedef struct s_controls
 {
@@ -104,7 +93,7 @@ typedef	struct s_raycast
 	double		inix;
 	char		face;
 	double		*dist;
-	t_sprite	*sps;
+	t_sprite	*sprites;
 	double		rayimp;
 	int			lnh;
 	int			color;
@@ -121,7 +110,7 @@ typedef struct s_set
 	char		*pathw;
 	t_img		w;
 	char		*pathp;
-	t_img		p;
+	t_img		sp;
 	int			f;
 	int			c;
 }			t_set;
@@ -160,28 +149,39 @@ typedef struct s_mapping
 }			t_mapping;
 
 int		another_line(t_mapping *map, int fd, char **line);
-int		builder(int ac, t_mlx *mlx);
 int		bye(t_mlx *mlx);
+int		colorizer(t_mlx *mlx, char **elem);
 void	dot_cub_parser(t_mlx *mlx, char *cub_path);
 int		free_mapping(t_mapping *map);
 int		free_mlx(t_mlx *mlx);
 int		free_split(int ret, char **split);
 void	fresh_mlx_vars(t_mlx *mlx);
 void	guinea_pig_map(t_mlx *mlx, t_mapping *map);
+void	init_player(t_mlx *mlx);
+void	initial_pic_to_bmp(t_mlx *mlx);
 int		key_pressed(int key, t_mlx *mlx);
 int		key_released(int key, t_mlx *mlx);
 void	mapper(t_mlx *mlx, int fd, char **line, char *gnl);
 int		msnprt(int fd, char *msn);
 void	paint_line(t_mlx *mlx);
+void	paint_sprites(t_mlx *mlx);
 int		parse_map_line(t_mlx *mlx, int fd, char **line, t_mapping *map);
 void	pixel_push(t_mlx *mlx, int x, int y);
 int		play(t_mlx *mlx);
 int		player_set(t_mlx *mlx, t_mapping *map, char dir, char **line);
 int		printerror(int err);
-int		raycaster(t_mlx *mlx);
+void	raycaster(t_mlx *mlx);
+void	return_sprites_to_map(t_mlx *mlx);
+void	set_control(t_mlx *mlx);
+int		set_set(t_mlx *mlx);
 int		set_rc_constants(t_mlx *mlx);
-int		window_sizer(t_mlx *mlx, char **elem);
+void	sprite_to_array(t_mlx *mlx);
+int		start_and_set_up_mlx(t_mlx *mlx);
+void	start_game(t_mlx *mlx);
 int		texturizer(t_mlx *mlx, char **elem);
-int		colorizer(t_mlx *mlx, char **elem);
+int		window_sizer(t_mlx *mlx, char **elem);
 
+void	write_pixels_to_bmp(t_mlx *mlx, int fd);
+void	write_dib_header(t_mlx *mlx, int fd);
+void	write_bmp_header(t_mlx *mlx, int fd);
 #endif

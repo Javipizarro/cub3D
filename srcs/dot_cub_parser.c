@@ -6,15 +6,19 @@
 /*   By: jpizarro <jpizarro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/21 17:32:18 by jpizarro          #+#    #+#             */
-/*   Updated: 2021/05/10 13:01:30 by jpizarro         ###   ########.fr       */
+/*   Updated: 2021/05/10 13:18:52 by jpizarro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 /*
-**	In this file, TO COMMENT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+**	In this file, .cub file is parse and its info checked and stored.
 */
 
 #include "../cub3d.h"
+
+/*
+**	Keeps record of the elements that have been added.
+*/
 
 char	checkelems(unsigned char pos)
 {
@@ -29,6 +33,10 @@ char	checkelems(unsigned char pos)
 	checkelems |= 1 << pos;
 	return (0);
 }
+
+/*
+**	Checks for the current element to be correct and not duplicated.
+*/
 
 int parse_element(t_mlx *mlx, char *line)
 {
@@ -55,6 +63,10 @@ int parse_element(t_mlx *mlx, char *line)
 	return (free_split(msnprt(2, "Unrecognized line on .cub"), elem));
 }
 
+/*
+**	Goes over the elements on the .cub file.
+*/
+
 void	elements_parser(t_mlx *mlx, int fd, char **line, char *gnl)
 {
 	char	pe;
@@ -79,6 +91,10 @@ void	elements_parser(t_mlx *mlx, int fd, char **line, char *gnl)
 	}
 }
 
+/*
+**	Checks whether anyting is after the map description on the .cub file.
+*/
+
 void	check_eof(t_mlx *mlx, int fd, char **line, char *gnl)
 {
 	while (*gnl == 1 && !(ft_strnlen(*line, 1)))
@@ -94,6 +110,10 @@ void	check_eof(t_mlx *mlx, int fd, char **line, char *gnl)
 	if (*gnl > 0)
 		mlx->err = msnprt(2, "Nothing allowed after map on file .cub");
 }
+
+/*
+**	Opens the .cub file and calls the different functions to process it
+*/
 
 void	dot_cub_parser(t_mlx *mlx, char *cub_path)
 {

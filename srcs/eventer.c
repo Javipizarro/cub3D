@@ -6,7 +6,7 @@
 /*   By: jpizarro <jpizarro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/09 07:58:01 by jpizarro          #+#    #+#             */
-/*   Updated: 2021/05/08 11:27:39 by jpizarro         ###   ########.fr       */
+/*   Updated: 2021/05/14 20:12:30 by jpizarro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,10 @@ int	key_pressed(int key, t_mlx *mlx)
 		mlx->py.spin = - (key == mlx->ctr.tl) + (key == mlx->ctr.tr);
 	else if (key == mlx->ctr.esc)
 		bye(mlx);
+//////////////
+	else if (key == 49)
+		initial_pic_to_bmp(mlx);
+	//////////////
 	return (0);
 }
 

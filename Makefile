@@ -6,7 +6,7 @@
 #    By: jpizarro <jpizarro@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/03/19 11:24:00 by jpizarro          #+#    #+#              #
-#    Updated: 2021/04/25 21:04:30 by jpizarro         ###   ########.fr        #
+#    Updated: 2021/05/13 18:00:48 by jpizarro         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -80,6 +80,9 @@ re: fclean all
 
 run: all
 	@./$(NAME) map.cub
+
+bmp: all
+	@./$(NAME) map.cub --save
 
 debug: fclean $(OBJS) $(STATICS)
 	@echo "Creating $@ file"

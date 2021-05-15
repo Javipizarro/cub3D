@@ -6,7 +6,7 @@
 /*   By: jpizarro <jpizarro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/08 12:55:19 by jpizarro          #+#    #+#             */
-/*   Updated: 2021/05/10 12:58:48 by jpizarro         ###   ########.fr       */
+/*   Updated: 2021/05/13 20:13:32 by jpizarro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ void	fresh_mlx_vars(t_mlx *mlx)
 	mlx->set.pathw = NULL;
 	mlx->set.pathp = NULL;
 	mlx->rc.dist = NULL;
-	mlx->rc.sps = NULL;
+	mlx->rc.sprites = NULL;
 	mlx->map.map = NULL;
 	mlx->map.sp_num = 0;
 }
@@ -44,14 +44,10 @@ int	free_split(int ret, char **split)
 	i = 0;
 	while (split[i])
 	{
-//	printf("\n-------------\nliberando: %p\tcontenido: %s\n-----------------\n", elem[wn], elem[wn]);
 		free (split[i]);
 		split[i] = NULL;
 		i++;
 	}
-	
-//	printf("\n-------------\nliberando: %p\tprincipal split\n-----------------\n", elem);
-
 	free(split);
 	split = NULL;
 	return (ret);
@@ -64,10 +60,6 @@ int	free_split(int ret, char **split)
 
 int free_mlx(t_mlx *mlx)
 {
-/////////////////////////////
-//		printf("en free_mlx: %i\n", system("leaks debug"));
-/////////////////////////////
-
 	if (mlx->set.pathn)
 		free(mlx->set.pathn);
 	if (mlx->set.paths)
@@ -81,7 +73,7 @@ int free_mlx(t_mlx *mlx)
 	if (mlx->rc.dist)
 		free(mlx->rc.dist);
 	if (mlx->map.map)
-		free(mlx->rc.sps);
+		free(mlx->rc.sprites);
 	if (mlx->map.map)
 		free_split(0, mlx->map.map);
 	fresh_mlx_vars(mlx);

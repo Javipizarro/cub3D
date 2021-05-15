@@ -6,7 +6,7 @@
 /*   By: jpizarro <jpizarro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/09 08:02:12 by jpizarro          #+#    #+#             */
-/*   Updated: 2021/05/08 13:14:22 by jpizarro         ###   ########.fr       */
+/*   Updated: 2021/05/13 18:59:36 by jpizarro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,9 +27,9 @@ int	set_rc_constants(t_mlx *mlx)
 	mlx->rc.dist = malloc(sizeof(double) * mlx->winw);
 	if (!(mlx->rc.dist))
 		return (msnprt(2, "mlx->rc.dist malloc went wrong"));
-	mlx->rc.sps = malloc(sizeof(t_sprite) * mlx->map.sp_num);
-	if (!(mlx->rc.sps))
-		return (msnprt(2, "mlx->rc.sps malloc went wrong"));
+	mlx->rc.sprites = ft_calloc(mlx->map.sp_num, sizeof(t_sprite));
+	if (!(mlx->rc.sprites))
+		return (msnprt(2, "mlx->rc.sprites malloc went wrong"));
 	return (0);
 }
 
@@ -48,8 +48,8 @@ void	ray_impact_part_one(t_mlx *mlx)
 	- (mlx->rc.rayx > 0)) * mlx->rc.incx;
 	while (mlx->map.map[mlx->rc.mapy][mlx->rc.mapx] != '1')
 	{
-//		if (mlx->map.map[mlx->rc.mapy][mlx->rc.mapx] == '2')
-//			store_sprite(mlx);		
+		if (mlx->map.map[mlx->rc.mapy][mlx->rc.mapx] == '2')
+			sprite_to_array(mlx);
 		if (mlx->rc.iniy < mlx->rc.inix)
 		{
 			mlx->rc.mapy += (mlx->rc.rayy >= 0) - (mlx->rc.rayy < 0);
@@ -89,7 +89,7 @@ void	ray_impact_part_two(t_mlx *mlx)
 **	Coordinates the whole creation of the new image to show on the window.
 */
 
-int	raycaster(t_mlx *mlx)
+void	raycaster(t_mlx *mlx)
 {
 	mlx->rc.camy = mlx->py.dirx * mlx->rc.fov;
 	mlx->rc.camx = - mlx->py.diry * mlx->rc.fov;
@@ -107,5 +107,6 @@ int	raycaster(t_mlx *mlx)
 		paint_line(mlx);
 	mlx->rc.line++;
 	}
-	return (0);
+	paint_sprites(mlx);
+	return_sprites_to_map(mlx);
 }
