@@ -6,7 +6,7 @@
 /*   By: jpizarro <jpizarro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/08 06:59:22 by jpizarro          #+#    #+#             */
-/*   Updated: 2021/05/13 18:48:39 by jpizarro         ###   ########.fr       */
+/*   Updated: 2021/05/15 10:28:56 by jpizarro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,7 @@ int	main(int argc, char **argv)
 
 	fresh_mlx_vars(&mlx);
 	mlx.err = arg_err(argc, argv);
+	mlx.argc = argc;
 	if (!mlx.err)
 		dot_cub_parser(&mlx, argv[1]);
 	if (!mlx.err)

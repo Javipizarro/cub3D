@@ -6,7 +6,7 @@
 /*   By: jpizarro <jpizarro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/08 12:30:30 by jpizarro          #+#    #+#             */
-/*   Updated: 2021/05/13 17:15:04 by jpizarro         ###   ########.fr       */
+/*   Updated: 2021/05/15 16:07:33 by jpizarro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,7 +146,9 @@ void	paint_sprites(t_mlx *mlx)
 		txtr = &mlx->set.sp;
 		k = sp_hor_ini * (sp_hor_ini > 0);
 		while (k < sp_hor_ini + sp_width && k < mlx->winw)
-		{
+		{	
+			if (mlx->rc.dist[k] < mlx->rc.sprites[i].dist && k++)
+				continue;
 			j = (mlx->winh > sp_height) * (mlx->winh - sp_height) / 2;
 			while (j < (sp_height + mlx->winh) / 2 && j < mlx->winh)
 			{

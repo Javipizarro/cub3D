@@ -6,7 +6,7 @@
 /*   By: jpizarro <jpizarro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/17 19:56:25 by jpizarro          #+#    #+#             */
-/*   Updated: 2021/05/14 22:38:25 by jpizarro         ###   ########.fr       */
+/*   Updated: 2021/05/15 09:55:08 by jpizarro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,6 +122,7 @@ typedef struct s_mlx
 	int			winw;
 	int			winh;
 	char		err;
+	char		argc;
 	t_controls	ctr;
 	t_img		img;
 	t_map		map;
@@ -180,8 +181,8 @@ int		start_and_set_up_mlx(t_mlx *mlx);
 void	start_game(t_mlx *mlx);
 int		texturizer(t_mlx *mlx, char **elem);
 int		window_sizer(t_mlx *mlx, char **elem);
-
-void	write_pixels_to_bmp(t_mlx *mlx, int fd);
-void	write_dib_header(t_mlx *mlx, int fd);
 void	write_bmp_header(t_mlx *mlx, int fd);
+void	write_dib_header(t_mlx *mlx, int fd);
+void	write_pixels_to_bmp(t_mlx *mlx, int fd);
+
 #endif

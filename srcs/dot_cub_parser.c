@@ -6,7 +6,7 @@
 /*   By: jpizarro <jpizarro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/21 17:32:18 by jpizarro          #+#    #+#             */
-/*   Updated: 2021/05/10 13:18:52 by jpizarro         ###   ########.fr       */
+/*   Updated: 2021/05/15 17:25:53 by jpizarro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ int parse_element(t_mlx *mlx, char *line)
 		|| (!(ft_strncmp(elem[0], "WE", 3)) && !(checkelems(4)))
 		|| (!(ft_strncmp(elem[0], "S", 2)) && !(checkelems(5)))))
 		return (free_split(texturizer(mlx, elem), elem));
-	else if (wn == 2 && ((!(ft_strncmp(elem[0], "F", 2)) && !(checkelems(6)))
+	else if (wn >= 2 && ((!(ft_strncmp(elem[0], "F", 2)) && !(checkelems(6)))
 		|| (!(ft_strncmp(elem[0], "C", 2)) && !(checkelems(7)))))
 		return (free_split(colorizer(mlx, elem), elem));
 	return (free_split(msnprt(2, "Unrecognized line on .cub"), elem));
