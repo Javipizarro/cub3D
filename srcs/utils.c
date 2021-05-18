@@ -6,7 +6,7 @@
 /*   By: jpizarro <jpizarro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/08 12:55:19 by jpizarro          #+#    #+#             */
-/*   Updated: 2021/05/13 20:13:32 by jpizarro         ###   ########.fr       */
+/*   Updated: 2021/05/17 03:18:05 by jpizarro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,15 +22,16 @@
 
 void	fresh_mlx_vars(t_mlx *mlx)
 {
+	mlx->map.map = NULL;
+	mlx->rc.wall_dist = NULL;
 	mlx->set.pathn = NULL;
 	mlx->set.paths = NULL;
 	mlx->set.pathe = NULL;
 	mlx->set.pathw = NULL;
-	mlx->set.pathp = NULL;
-	mlx->rc.dist = NULL;
-	mlx->rc.sprites = NULL;
-	mlx->map.map = NULL;
-	mlx->map.sp_num = 0;
+	mlx->set.paths1 = NULL;
+	mlx->sp.num = 0;
+	mlx->sp.list = NULL;
+	mlx->sp.order = NULL;
 }
 
 /*
@@ -60,6 +61,10 @@ int	free_split(int ret, char **split)
 
 int free_mlx(t_mlx *mlx)
 {
+	if (mlx->rc.wall_dist)
+		free(mlx->rc.wall_dist);
+	if (mlx->map.map)
+		free_split(0, mlx->map.map);
 	if (mlx->set.pathn)
 		free(mlx->set.pathn);
 	if (mlx->set.paths)
@@ -68,14 +73,12 @@ int free_mlx(t_mlx *mlx)
 		free(mlx->set.pathe);
 	if (mlx->set.pathw)
 		free(mlx->set.pathw);
-	if (mlx->set.pathp)
-		free(mlx->set.pathp);
-	if (mlx->rc.dist)
-		free(mlx->rc.dist);
-	if (mlx->map.map)
-		free(mlx->rc.sprites);
-	if (mlx->map.map)
-		free_split(0, mlx->map.map);
+	if (mlx->set.paths1)
+		free(mlx->set.paths1);
+	if (mlx->sp.list)
+		free(mlx->sp.list);
+	if (mlx->sp.order)
+		free(mlx->sp.order);
 	fresh_mlx_vars(mlx);
 	return (0);
 }
@@ -95,4 +98,3 @@ int	msnprt(int fd, char *msn)
 	write (fd, "\n", 1);
 	return (fd);
 }
-

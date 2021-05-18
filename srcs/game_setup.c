@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Setup.c                                            :+:      :+:    :+:   */
+/*   game_setup.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jpizarro <jpizarro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/21 12:53:14 by jpizarro          #+#    #+#             */
-/*   Updated: 2021/05/13 18:33:04 by jpizarro         ###   ########.fr       */
+/*   Updated: 2021/05/18 10:43:20 by jpizarro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ void	set_control(t_mlx *mlx)
 **	Sets the player initial state.
 */
 
-void	init_player(t_mlx *mlx)
+void	set_player(t_mlx *mlx)
 {
 	mlx->py.move[0] = 0;
 	mlx->py.move[1] = 0;
@@ -55,8 +55,8 @@ int	set_set(t_mlx *mlx)
 	&mlx->set.e.dimx, &mlx->set.e.dimy);
 	mlx->set.w.ptr = mlx_xpm_file_to_image(mlx->mlx, mlx->set.pathw,
 	&mlx->set.w.dimx, &mlx->set.w.dimy);
-	mlx->set.sp.ptr = mlx_xpm_file_to_image(mlx->mlx, mlx->set.pathp,
-	&mlx->set.sp.dimx, &mlx->set.sp.dimy);
+	mlx->set.s1.ptr = mlx_xpm_file_to_image(mlx->mlx, mlx->set.paths1,
+	&mlx->set.s1.dimx, &mlx->set.s1.dimy);
 	if (!(mlx->set.n.ptr && mlx->set.s.ptr && mlx->set.e.ptr && mlx->set.w.ptr))
 		return (msnprt(2, "Texture file does not exits."));
 	mlx->set.n.addr = mlx_get_data_addr(mlx->set.n.ptr, &mlx->set.n.bpp,
@@ -67,7 +67,40 @@ int	set_set(t_mlx *mlx)
 	&mlx->set.e.lnlen, &mlx->set.e.endian);
 	mlx->set.w.addr = mlx_get_data_addr(mlx->set.w.ptr, &mlx->set.w.bpp,
 	&mlx->set.w.lnlen, &mlx->set.w.endian);
-	mlx->set.sp.addr = mlx_get_data_addr(mlx->set.sp.ptr, &mlx->set.sp.bpp,
-	&mlx->set.sp.lnlen, &mlx->set.sp.endian);
+	mlx->set.s1.addr = mlx_get_data_addr(mlx->set.s1.ptr, &mlx->set.s1.bpp,
+	&mlx->set.s1.lnlen, &mlx->set.s1.endian);
 	return (0);
 }
+
+/*
+**	Here is where the lists used to paint the sprites are created
+*/
+
+int	prepare_sprites(t_mlx *mlx)
+{
+	int i;
+	int	x;
+	int	y;
+
+	mlx->sp.list = malloc(sizeof(t_one_sprite) * mlx->sp.num);
+	mlx->sp.order = malloc(sizeof(int) * mlx->sp.num + 1);
+	if (!mlx->sp.list || !mlx->sp.order)
+		return (msnprt(2, "Error while allocating sprite lists"));
+	i = 0;
+	y = -1;
+	while (mlx->map.map[++y])
+	{
+		x = -1;
+		while (mlx->map.map[y][++x])
+		{
+			if (mlx->map.map[y][x] == '2')
+			{
+				mlx->sp.list[i].x = x;
+				mlx->sp.list[i].y = y;
+				i++;
+			}
+		}
+	}
+	return (0);
+}
+

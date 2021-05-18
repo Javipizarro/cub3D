@@ -6,7 +6,7 @@
 /*   By: jpizarro <jpizarro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/09 07:58:01 by jpizarro          #+#    #+#             */
-/*   Updated: 2021/05/14 20:12:30 by jpizarro         ###   ########.fr       */
+/*   Updated: 2021/05/17 23:21:36 by jpizarro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ int	play(t_mlx *mlx)
 
 /*
 **	When a key is pressed it changes the motion of the player accordingly.
-**	If the pressed key is 'ESC', it calls bye() to exit the program.
+**	If the pressed key is 'ESC', it calls game_over() to exit the program.
 */
 
 int	key_pressed(int key, t_mlx *mlx)
@@ -88,10 +88,10 @@ int	key_pressed(int key, t_mlx *mlx)
 	else if (key == mlx->ctr.tl || key == mlx->ctr.tr)
 		mlx->py.spin = - (key == mlx->ctr.tl) + (key == mlx->ctr.tr);
 	else if (key == mlx->ctr.esc)
-		bye(mlx);
+		game_over(mlx);
 //////////////
 	else if (key == 49)
-		initial_pic_to_bmp(mlx);
+		mlx->print_var = 1;
 	//////////////
 	return (0);
 }
@@ -108,5 +108,9 @@ int	key_released(int key, t_mlx *mlx)
 		mlx->py.move[1] = 0;
 	else if (key == mlx->ctr.tl || key == mlx->ctr.tr)
 		mlx->py.spin = 0;
+//////////////
+	else if (key == 49)
+		mlx->print_var = 0;
+	//////////////
 	return (0);
 }

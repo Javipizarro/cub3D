@@ -6,7 +6,7 @@
 /*   By: jpizarro <jpizarro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/26 07:29:37 by jpizarro          #+#    #+#             */
-/*   Updated: 2021/05/10 13:01:28 by jpizarro         ###   ########.fr       */
+/*   Updated: 2021/05/18 11:03:31 by jpizarro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 **	or we exceed the limits of the map so there is a leak.
 */
 
-int	find_map_leaks(t_mapping *map, int i, int j)
+int	find_map_leaks(t_mapping *map, unsigned int i, unsigned int j)
 {
 	map->g_pig[j][i] = '1';
 	if (!i || !j || i == map->dimx - 1|| j == map->dimy - 1)
@@ -59,7 +59,7 @@ void	parse_map_lines(t_mlx *mlx, int fd, char **line, t_mapping *map)
 				&&  (!(player_set(mlx, map, (*line)[map->i], line))))))
 				mlx->err = msnprt(2, "Invalid map configuration");
 			else if ((*line)[map->i++] == '2')
-				mlx->map.sp_num++;
+				mlx->sp.num++;
 		if (!mlx->err && another_line(map, fd, line) < 0)
 			mlx->err = msnprt(2, "Corrupt .cub file");
 	}

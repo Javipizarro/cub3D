@@ -6,7 +6,7 @@
 /*   By: jpizarro <jpizarro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/09 08:02:12 by jpizarro          #+#    #+#             */
-/*   Updated: 2021/05/13 18:59:36 by jpizarro         ###   ########.fr       */
+/*   Updated: 2021/05/17 19:07:02 by jpizarro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,12 +24,9 @@
 int	set_rc_constants(t_mlx *mlx)
 {
 	mlx->rc.fov = 0.66;
-	mlx->rc.dist = malloc(sizeof(double) * mlx->winw);
-	if (!(mlx->rc.dist))
-		return (msnprt(2, "mlx->rc.dist malloc went wrong"));
-	mlx->rc.sprites = ft_calloc(mlx->map.sp_num, sizeof(t_sprite));
-	if (!(mlx->rc.sprites))
-		return (msnprt(2, "mlx->rc.sprites malloc went wrong"));
+	mlx->rc.wall_dist = malloc(sizeof(double) * mlx->winw);
+	if (!(mlx->rc.wall_dist))
+		return (msnprt(2, "mlx->rc.wall_dist malloc went wrong"));
 	return (0);
 }
 
@@ -48,8 +45,6 @@ void	ray_impact_part_one(t_mlx *mlx)
 	- (mlx->rc.rayx > 0)) * mlx->rc.incx;
 	while (mlx->map.map[mlx->rc.mapy][mlx->rc.mapx] != '1')
 	{
-		if (mlx->map.map[mlx->rc.mapy][mlx->rc.mapx] == '2')
-			sprite_to_array(mlx);
 		if (mlx->rc.iniy < mlx->rc.inix)
 		{
 			mlx->rc.mapy += (mlx->rc.rayy >= 0) - (mlx->rc.rayy < 0);
@@ -70,19 +65,21 @@ void	ray_impact_part_two(t_mlx *mlx)
 	if (mlx->rc.face == 'h')
 	{
 		mlx->rc.face = 'n' * (mlx->rc.rayy >= 0) + 's' * (mlx->rc.rayy < 0);
-		mlx->rc.dist[mlx->rc.line] = fabs((mlx->py.posy - mlx->rc.mapy
+		mlx->rc.wall_dist[mlx->rc.line] = fabs((mlx->py.posy - mlx->rc.mapy
 		- (mlx->rc.rayy < 0)) / mlx->rc.rayy);
 		mlx->rc.rayimp = fabs((mlx->rc.rayy > 0) - (mlx->py.posx
-		+ mlx->rc.rayx * mlx->rc.dist[mlx->rc.line] - mlx->rc.mapx));
+		+ mlx->rc.rayx * mlx->rc.wall_dist[mlx->rc.line] - mlx->rc.mapx));
 	}
 	else
 	{
 		mlx->rc.face = 'w' * (mlx->rc.rayx >= 0) + 'e' * (mlx->rc.rayx < 0);
-		mlx->rc.dist[mlx->rc.line] = fabs((mlx->py.posx - mlx->rc.mapx
+		mlx->rc.wall_dist[mlx->rc.line] = fabs((mlx->py.posx - mlx->rc.mapx
 		- (mlx->rc.rayx < 0)) / mlx->rc.rayx);
 		mlx->rc.rayimp = fabs((mlx->rc.rayx < 0) - (mlx->py.posy
-		+ mlx->rc.rayy * mlx->rc.dist[mlx->rc.line] - mlx->rc.mapy));
+		+ mlx->rc.rayy * mlx->rc.wall_dist[mlx->rc.line] - mlx->rc.mapy));
 	}
+	if (mlx->rc.wall_dist[mlx->rc.line] > mlx->rc.max_dist)
+		mlx->rc.max_dist = mlx->rc.wall_dist[mlx->rc.line];
 }
 
 /*
@@ -94,6 +91,7 @@ void	raycaster(t_mlx *mlx)
 	mlx->rc.camy = mlx->py.dirx * mlx->rc.fov;
 	mlx->rc.camx = - mlx->py.diry * mlx->rc.fov;
 	mlx->rc.line = 0;
+	mlx->rc.max_dist = 0;
 	while (mlx->rc.line < mlx->winw)
 	{
 		mlx->rc.mapy = mlx->py.posy;
@@ -103,10 +101,10 @@ void	raycaster(t_mlx *mlx)
 		mlx->rc.rayx = mlx->py.dirx + mlx->rc.camx * mlx->rc.camdot;
 		ray_impact_part_one(mlx);
 		ray_impact_part_two(mlx);
-		mlx->rc.lnh = (mlx->winh / mlx->rc.dist[mlx->rc.line]);
+		mlx->rc.lnh = (mlx->winh / mlx->rc.wall_dist[mlx->rc.line]);
 		paint_line(mlx);
 	mlx->rc.line++;
 	}
-	paint_sprites(mlx);
-	return_sprites_to_map(mlx);
+	spriter(mlx);
+//	return_sprites_to_map(mlx);
 }

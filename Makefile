@@ -6,7 +6,7 @@
 #    By: jpizarro <jpizarro@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/03/19 11:24:00 by jpizarro          #+#    #+#              #
-#    Updated: 2021/05/13 18:00:48 by jpizarro         ###   ########.fr        #
+#    Updated: 2021/05/18 10:54:15 by jpizarro         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -40,14 +40,14 @@ MLXFLAGS = -lmlx -framework OpenGL -framework AppKit
 all: $(NAME)
 
 $(NAME): $(OBJS) $(STATICS)
-	@echo "Creating $@"
-	@$(CC) $(CFLAGS) $(MLXFLAGS) $(OBJS) $(STATICS) -o $@
-	@echo "$@ is ready!"
+	echo "Creating $@"
+	$(CC) $(CFLAGS) $(MLXFLAGS) $(OBJS) $(STATICS) -o $@
+	echo "$@ is ready!"
 
 %.o: %.c
-#	@echo "files that need to be compiled: $?"
-#	@$(CC) $(CFLAGS) -c $< -o $(<:.c=.o)
-	@$(CC) -g -c $< -o $(<:.c=.o)
+#	echo "files that need to be compiled: $?"
+#	$(CC) $(CFLAGS) -c $< -o $(<:.c=.o)
+	$(CC) -g $(CFLAGS) -c $< -o $(<:.c=.o)
 
 #$(STATICS):
 #	cd $(LIBFOLDERS) && $(MAKE)
@@ -60,8 +60,8 @@ $(STATICS):
 
 
 clean:
-	@echo "Cleaing up binary files"
-	@$(RM) $(OBJS)
+	echo "Cleaing up binary files"
+	$(RM) $(OBJS)
 #	cd libs/mathft/ && $(MAKE) $@
 	cd libs/libft/ && $(MAKE) $@
 #	cd libs/color/ && $(MAKE) $@
@@ -69,8 +69,8 @@ clean:
 
 
 fclean: clean
-	@echo "also $(NAME) and debug files"
-	@$(RM) $(NAME) debug
+	echo "also $(NAME) and debug files"
+	$(RM) $(NAME) debug
 #	cd libs/mathft/ && $(MAKE) $@
 	cd libs/libft/ && $(MAKE) $@
 #	cd libs/color/ && $(MAKE) $@
@@ -79,16 +79,16 @@ fclean: clean
 re: fclean all
 
 run: all
-	@./$(NAME) map.cub
+	./$(NAME) map.cub
 
 bmp: all
-	@./$(NAME) map.cub --save
+	./$(NAME) map.cub --save
 
 debug: fclean $(OBJS) $(STATICS)
-	@echo "Creating $@ file"
-	@$(CC) -g $(MLXFLAGS) $(OBJS) $(STATICS) -o $@
-#	@$(CC) -g $(CFLAGS) $(MLXFLAGS) $(OBJS) $(STATICS) -o $@
-	@echo "$@ is ready!"
+	echo "Creating $@ file"
+	$(CC) -g $(MLXFLAGS) $(OBJS) $(STATICS) -o $@
+#	$(CC) -g $(CFLAGS) $(MLXFLAGS) $(OBJS) $(STATICS) -o $@
+	echo "$@ is ready!"
 
 debrun: debug
 	gdb $(NAME)

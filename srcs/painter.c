@@ -6,7 +6,7 @@
 /*   By: jpizarro <jpizarro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/09 08:08:41 by jpizarro          #+#    #+#             */
-/*   Updated: 2021/05/06 18:47:29 by jpizarro         ###   ########.fr       */
+/*   Updated: 2021/05/18 11:07:46 by jpizarro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ t_img	*pick_txtr(t_mlx *mlx)
 		txtr = &mlx->set.s;
 	else if (mlx->rc.face == 'e')
 		txtr = &mlx->set.e;
-	else if (mlx->rc.face == 'w')
+	else
 		txtr = &mlx->set.w;
 	return (txtr);
 }

@@ -6,7 +6,7 @@
 /*   By: jpizarro <jpizarro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/08 06:59:22 by jpizarro          #+#    #+#             */
-/*   Updated: 2021/05/15 10:28:56 by jpizarro         ###   ########.fr       */
+/*   Updated: 2021/05/17 23:24:53 by jpizarro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,17 +50,25 @@ int	main(int argc, char **argv)
 {
 	t_mlx	mlx;
 
+//////////
+	mlx.print_var = 0;
+	//////////
+
+
 	fresh_mlx_vars(&mlx);
 	mlx.err = arg_err(argc, argv);
 	mlx.argc = argc;
 	if (!mlx.err)
 		dot_cub_parser(&mlx, argv[1]);
 	if (!mlx.err)
-		start_and_set_up_mlx(&mlx);
+		mlx_start_and_set_up(&mlx);
 	if (!mlx.err && argc == 2)
-		start_game(&mlx);
+		game_start(&mlx);
 	else if (!mlx.err && argc == 3)
-		initial_pic_to_bmp(&mlx);
+		bmp_of_game_ini(&mlx);
 	free_mlx(&mlx);
+/////////////
+	system("leaks cub3D");
+	////////
 	return (0);
 }
