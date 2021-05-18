@@ -6,7 +6,7 @@
 /*   By: jpizarro <jpizarro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/21 12:53:14 by jpizarro          #+#    #+#             */
-/*   Updated: 2021/05/18 10:43:20 by jpizarro         ###   ########.fr       */
+/*   Updated: 2021/05/18 12:55:46 by jpizarro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,12 +19,12 @@
 
 void	set_control(t_mlx *mlx)
 {
-	mlx->ctr.u = 13;
-	mlx->ctr.d = 1;
-	mlx->ctr.l = 0;
-	mlx->ctr.r = 2;
-	mlx->ctr.tl = 123;
-	mlx->ctr.tr = 124;
+	mlx->ctr.moveforward = 13;
+	mlx->ctr.movebackward = 1;
+	mlx->ctr.moveleft = 0;
+	mlx->ctr.moveright = 2;
+	mlx->ctr.turnleft = 123;
+	mlx->ctr.turnright = 124;
 	mlx->ctr.esc = 53;
 	mlx->ctr.speed = 0.1;
 	mlx->ctr.turn = 0.05;
@@ -36,9 +36,15 @@ void	set_control(t_mlx *mlx)
 
 void	set_player(t_mlx *mlx)
 {
-	mlx->py.move[0] = 0;
-	mlx->py.move[1] = 0;
-	mlx->py.spin = 0;
+	mlx->py.moveforward = 0;
+	mlx->py.movebackward = 0;
+	mlx->py.advance = 0;
+	mlx->py.moveleft = 0;
+	mlx->py.moveright = 0;
+	mlx->py.sidemove = 0;
+	mlx->py.turnleft = 0;
+	mlx->py.turnright = 0;
+	mlx->py.turn = 0;
 }
 
 /*

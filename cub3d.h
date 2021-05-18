@@ -6,7 +6,7 @@
 /*   By: jpizarro <jpizarro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/17 19:56:25 by jpizarro          #+#    #+#             */
-/*   Updated: 2021/05/18 11:10:31 by jpizarro         ###   ########.fr       */
+/*   Updated: 2021/05/18 12:54:29 by jpizarro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,17 +27,34 @@
 typedef struct s_controls
 {
 	char			esc;
-	char			u;
-	char			d;
-	char			l;
-	char			r;
-	char			tl;
-	char			tr;
-	char			jp;
-	char			sh;
+	char			moveforward;
+	char			movebackward;
+	char			moveleft;
+	char			moveright;
+	char			turnleft;
+	char			turnright;
+//	char			jump;
+//	char			sh;
 	double			speed;
 	double			turn;
 }			t_controls;
+
+typedef struct s_player
+{
+	double			posy;
+	double			posx;
+	double			diry;
+	double			dirx;
+	char			moveforward;
+	char			movebackward;
+	char			advance;
+	char			moveleft;
+	char			moveright;
+	char			sidemove;
+	char			turnleft;
+	char			turnright;
+	char			turn;
+}			t_player;
 
 typedef struct s_img
 {
@@ -57,16 +74,6 @@ typedef struct s_map
 	char			**map;
 	int				dimy;
 }			t_map;
-
-typedef struct s_player
-{
-	double			posy;
-	double			posx;
-	double			diry;
-	double			dirx;
-	char			move[2];
-	char			spin;
-}			t_player;
 
 typedef struct s_one_sprite
 {
@@ -94,11 +101,11 @@ typedef struct s_paint_sprite_tools
 	int				dimy;
 	int				inix;
 	int				posx;
-	unsigned int	ini_paint_x;
+	int				ini_paint_x;
 	int				endx;
 	int				iniy;
 	int				endy;
-	unsigned int	ini_paint_y;
+	int				ini_paint_y;
 	int				sp_col;
 	int				sp_row;
 }			t_paint_sprite_tools;
