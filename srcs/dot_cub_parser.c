@@ -6,7 +6,7 @@
 /*   By: jpizarro <jpizarro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/21 17:32:18 by jpizarro          #+#    #+#             */
-/*   Updated: 2021/05/16 19:52:18 by jpizarro         ###   ########.fr       */
+/*   Updated: 2021/05/18 17:41:44 by jpizarro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,17 +20,19 @@
 **	Keeps record of the elements that have been added.
 */
 
-char	checkelems(unsigned char pos)
+char	checkelems(unsigned char pos, t_mlx *mlx)
 {
-	static unsigned char checkelems = 0;
+	static unsigned char	checkelems = 0;
 
 	if (pos == 0xff && checkelems == 0xff)
 		return (0);
 	if (pos == 0xff)
 		return (1);
 	if (1 << pos & checkelems)
-		return 2;
-//		return (msnprt(2, "Duplicated element on .cub file"));
+	{
+		mlx->err = (msnprt(2, "Duplicated element on .cub file"));
+		return (2);
+	}
 	checkelems |= 1 << pos;
 	return (0);
 }
@@ -39,29 +41,25 @@ char	checkelems(unsigned char pos)
 **	Checks for the current element to be correct and not duplicated.
 */
 
-int parse_element(t_mlx *mlx, char *line)
+int	parse_element(t_mlx *mlx, char *line)
 {
-	if (!checkelems(0xff) && *line
-	&& ((line[0] >= '0' && line[0] <= '2') || line[0] == ' '))
+	if (!checkelems(0xff, mlx) && *line
+		&& ((line[0] >= '0' && line[0] <= '2') || line[0] == ' '))
 		return (0);
-	if (!checkelems(0xff))
-		printf("NO DEBERÍA APARECER\n");
-
-	if ((!ft_strncmp(line, "NO ", 3) && !checkelems(0))
-	|| (!ft_strncmp(line, "SO ", 3) && !checkelems(1))
-	|| (!ft_strncmp(line, "EA ", 3) && !checkelems(2))
-	|| (!ft_strncmp(line, "WE ", 3) && !checkelems(3))
-	|| (!ft_strncmp(line, "S ", 2) && !checkelems(4)))
-		return(texturizer(mlx, line));
-	else if ((!ft_strncmp(line, "R ", 2))&& !checkelems(5)
-	&& ft_wordcount(line, ' ') == 3)
-		return(window_sizer(mlx, ft_split(line, ' ')));
-//	else if (((!ft_strncmp(line, "F ", 2) && !checkelems(6))
-//	|| (!ft_strncmp(line, "C ", 2) && !checkelems(7)))
-//	&&	ft_wordcount(line, ',') == 3)
-	else if ((!ft_strncmp(line, "F ", 2) && !checkelems(6))
-	|| (!ft_strncmp(line, "C ", 2) && !checkelems(7)))
-		return(colorizer(mlx, line[0], ft_split(&line[2], ',')));
+	if ((!ft_strncmp(line, "NO ", 3) && !checkelems(0, mlx))
+		|| (!ft_strncmp(line, "SO ", 3) && !checkelems(1, mlx))
+		|| (!ft_strncmp(line, "EA ", 3) && !checkelems(2, mlx))
+		|| (!ft_strncmp(line, "WE ", 3) && !checkelems(3, mlx))
+		|| (!ft_strncmp(line, "S ", 2) && !checkelems(4, mlx)))
+		return (texturizer(mlx, line));
+	else if ((!ft_strncmp(line, "R ", 2)) && !checkelems(5, mlx)
+		&& ft_wordcount(line, ' ') == 3)
+		return (window_sizer(mlx, ft_split(line, ' ')));
+	else if ((!ft_strncmp(line, "F ", 2) && !checkelems(6, mlx))
+		|| (!ft_strncmp(line, "C ", 2) && !checkelems(7, mlx)))
+		return (colorizer(mlx, line[0], ft_split(&line[2], ',')));
+	if (mlx->err)
+		return (mlx->err);
 	return (msnprt(2, "Reached unvalid line for an element on .cub"));
 }
 
@@ -99,7 +97,7 @@ void	elements_parser(t_mlx *mlx, int fd, char **line, char *gnl)
 
 void	check_eof(t_mlx *mlx, int fd, char **line, char *gnl)
 {
-	int len;
+	int	len;
 
 	len = 0;
 	while (*gnl == 1 && !len)

@@ -6,7 +6,7 @@
 /*   By: jpizarro <jpizarro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/08 12:55:19 by jpizarro          #+#    #+#             */
-/*   Updated: 2021/05/17 03:18:05 by jpizarro         ###   ########.fr       */
+/*   Updated: 2021/05/18 18:15:34 by jpizarro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,11 +41,11 @@ void	fresh_mlx_vars(t_mlx *mlx)
 int	free_split(int ret, char **split)
 {
 	int	i;
-	
+
 	i = 0;
 	while (split[i])
 	{
-		free (split[i]);
+		free(split[i]);
 		split[i] = NULL;
 		i++;
 	}
@@ -59,7 +59,7 @@ int	free_split(int ret, char **split)
 **	and set them to NULL.
 */
 
-int free_mlx(t_mlx *mlx)
+int	free_mlx(t_mlx *mlx)
 {
 	if (mlx->rc.wall_dist)
 		free(mlx->rc.wall_dist);

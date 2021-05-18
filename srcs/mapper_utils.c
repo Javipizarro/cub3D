@@ -6,7 +6,7 @@
 /*   By: jpizarro <jpizarro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/26 18:01:58 by jpizarro          #+#    #+#             */
-/*   Updated: 2021/05/13 18:43:33 by jpizarro         ###   ########.fr       */
+/*   Updated: 2021/05/18 13:48:30 by jpizarro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ int	player_set(t_mlx *mlx, t_mapping *map, char dir, char **line)
 		mlx->py.dirx = -1;
 	map->py_in = dir;
 	(*line)[map->i] = '0';
-	return(0);
+	return (0);
 }
 
 /*
@@ -60,10 +60,9 @@ int	another_line(t_mapping *map, int fd, char **line)
 	free(map->buff);
 	map->buff = NULL;
 	free(*line);
-	
 	*line = NULL;
 	map->dimx = map->dimx * (map->dimx >= map->i)
-	+ map->i * (map->i > map->dimx);
+		+ map->i * (map->i > map->dimx);
 	map->gnl = get_next_line(fd, line);
 	return (map->gnl);
 }
@@ -91,7 +90,7 @@ int	free_mapping(t_mapping *map)
 **	simplify the leak test.
 */
 
-void guinea_pig_map(t_mlx *mlx, t_mapping *map)
+void	guinea_pig_map(t_mlx *mlx, t_mapping *map)
 {
 	map->i = 0;
 	map->g_pig = malloc(sizeof(char *) * (map->dimy + 1));
@@ -101,7 +100,7 @@ void guinea_pig_map(t_mlx *mlx, t_mapping *map)
 	{
 		map->g_pig[map->i] = ft_charlloc(sizeof(char) * map->dimx, ' ');
 		ft_memcpy(map->g_pig[map->i], mlx->map.map[map->i],
-		ft_strlen(mlx->map.map[map->i]));
+			ft_strlen(mlx->map.map[map->i]));
 		map->i++;
 	}
 	map->g_pig[map->i] = NULL;

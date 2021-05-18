@@ -6,7 +6,7 @@
 /*   By: jpizarro <jpizarro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/09 08:08:41 by jpizarro          #+#    #+#             */
-/*   Updated: 2021/05/18 11:07:46 by jpizarro         ###   ########.fr       */
+/*   Updated: 2021/05/18 20:32:40 by jpizarro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,9 @@
 void	pixel_push(t_mlx *mlx, int x, int y)
 {
 	char	*dest;
+
 	dest = mlx->img.addr + (y * mlx->img.lnlen + x * (mlx->img.bpp / 8));
-	*(unsigned int*)dest = mlx->rc.color;
+	*(unsigned int *)dest = mlx->rc.color;
 }
 
 /*
@@ -60,27 +61,23 @@ void	paint_line(t_mlx *mlx)
 	int		xpmx;
 	int		xpmy;
 	t_img	*txtr;
-	
+
 	i = 0;
 	mlx->rc.color = mlx->set.c;
 	while (i <= (mlx->winh - mlx->rc.lnh) / 2)
-	{
-		pixel_push(mlx, mlx->rc.line, i);
-		i++;
-	}
+		pixel_push(mlx, mlx->rc.line, i++);
 	txtr = pick_txtr(mlx);
 	xpmx = (int)(txtr->dimx * mlx->rc.rayimp);
 	while (i < (mlx->winh + mlx->rc.lnh) / 2 && i < mlx->winh)
 	{
-		xpmy = (int)(txtr->dimy * (2 * i - mlx->winh + mlx->rc.lnh) / (2 * mlx->rc.lnh));
-		mlx->rc.color = *(unsigned*)(txtr->addr + (xpmy * txtr->dimx + xpmx) * txtr->bpp / 8);
+		xpmy = (int )(txtr->dimy * (2 * i - mlx->winh + mlx->rc.lnh)
+				/ (2 * mlx->rc.lnh));
+		mlx->rc.color = *(unsigned *)(txtr->addr + (xpmy * txtr->dimx + xpmx)
+				* txtr->bpp / 8);
 		pixel_push(mlx, mlx->rc.line, i);
 		i++;
 	}
 	mlx->rc.color = mlx->set.f;
 	while (i < mlx->winh)
-	{
-		pixel_push(mlx, mlx->rc.line, i);
-		i++;
-	}
+		pixel_push(mlx, mlx->rc.line, i++);
 }

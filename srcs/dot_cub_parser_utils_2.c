@@ -6,7 +6,7 @@
 /*   By: jpizarro <jpizarro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/24 20:46:08 by jpizarro          #+#    #+#             */
-/*   Updated: 2021/05/16 09:54:10 by jpizarro         ###   ########.fr       */
+/*   Updated: 2021/05/18 18:16:37 by jpizarro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,8 @@
 
 int	texturizer(t_mlx *mlx, char *line)
 {
-	char *path;
-	int	i;
+	char	*path;
+	int		i;
 
 	i = ft_charindex(line, ' ');
 	while (line[i] == ' ')
@@ -69,7 +69,7 @@ int	window_sizer(t_mlx *mlx, char **elem)
 		i++;
 	mlx->winw = ft_atoi(elem[1]);
 	mlx->winw = (mlx->winw < 0 || ft_strlen(&elem[1][i]) > 9) * maxw
-	+ (mlx->winw > 0) * mlx->winw;
+		+ (mlx->winw > 0) * mlx->winw;
 	if (mlx->argc == 2)
 		mlx->winw = (mlx->winw > maxw) * maxw + (mlx->winw <= maxw) * mlx->winw;
 	i = 0;
@@ -77,56 +77,8 @@ int	window_sizer(t_mlx *mlx, char **elem)
 		i++;
 	mlx->winh = ft_atoi(elem[2]);
 	mlx->winh = (mlx->winh < 0 || ft_strlen(&elem[2][i]) > 9) * maxh
-	+ (mlx->winh > 0) * mlx->winh;
+		+ (mlx->winh > 0) * mlx->winh;
 	if (mlx->argc == 2)
 		mlx->winh = (mlx->winh > maxh) * maxh + (mlx->winh <= maxh) * mlx->winh;
 	return (free_split(1, elem));
 }
-
-///*
-//**	Stores the windows size within the limits if it is for a game-play window.
-//*/
-//
-//void	store_window_dimensions(t_mlx *mlx, int maxw, int maxh, char **elem)
-//{
-//	int		i;
-//
-//	i = 0;
-//	while (elem[1][i] == '0')
-//		i++;
-//	mlx->winw = ft_atoi(elem[1]);
-//	mlx->winw = (mlx->winw < 0 || ft_strlen(&elem[1][i]) > 9) * maxw
-//	+ (mlx->winw > 0) * mlx->winw;
-//	if (mlx->argc == 2)
-//		mlx->winw = (mlx->winw > maxw) * maxw + (mlx->winw <= maxw) * mlx->winw;
-//	i = 0;
-//	while (elem[2][i] == '0')
-//		i++;
-//	mlx->winh = ft_atoi(elem[2]);
-//	mlx->winh = (mlx->winh < 0 || ft_strlen(&elem[2][i]) > 9) * maxh
-//	+ (mlx->winh > 0) * mlx->winh;
-//	if (mlx->argc == 2)
-//		mlx->winh = (mlx->winh > maxh) * maxh + (mlx->winh <= maxh) * mlx->winh;
-//}
-//
-///*
-//**	Parses the R element sets the max limits for a game-play window size
-//**	and	orders to store it.
-//*/
-//
-//int	window_sizer(t_mlx *mlx, char *line)
-//{
-//	int		maxw;
-//	int		maxh;
-//	char	**elem;
-//
-//	if (ft_wordcount(line, ' ') != 3)
-//		return (msnprt(2, "Wrong resolution format."));
-//	elem = ft_split(line, ' ');
-//	if (arenum(elem, 'r') == 2)
-//		return (2);
-//	maxw = 5120 / 2;
-//	maxh = 2880 / 2 - 28;
-//	store_window_dimensions(mlx, maxw, maxh, elem);
-//	return(free_split(1, elem));
-//}

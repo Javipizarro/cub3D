@@ -6,7 +6,7 @@
 /*   By: jpizarro <jpizarro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/26 07:29:37 by jpizarro          #+#    #+#             */
-/*   Updated: 2021/05/18 11:03:31 by jpizarro         ###   ########.fr       */
+/*   Updated: 2021/05/18 13:40:51 by jpizarro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@
 int	find_map_leaks(t_mapping *map, unsigned int i, unsigned int j)
 {
 	map->g_pig[j][i] = '1';
-	if (!i || !j || i == map->dimx - 1|| j == map->dimy - 1)
+	if (!i || !j || i == map->dimx - 1 || j == map->dimy - 1)
 		return (msnprt(2, "The map is open"));
 	if (map->g_pig[j - 1][i] != '1' && find_map_leaks(map, i, j - 1))
 		return (2);
@@ -32,7 +32,7 @@ int	find_map_leaks(t_mapping *map, unsigned int i, unsigned int j)
 		return (2);
 	if (map->g_pig[j][i - 1] != '1' && find_map_leaks(map, i - 1, j))
 		return (2);
-	return(0);	
+	return (0);
 }
 
 /*
@@ -56,10 +56,10 @@ void	parse_map_lines(t_mlx *mlx, int fd, char **line, t_mapping *map)
 				|| (*line)[map->i] == ' ')
 				|| (((*line)[map->i] == 'N' || (*line)[map->i] == 'S'
 				|| (*line)[map->i] == 'E' || (*line)[map->i] == 'W')
-				&&  (!(player_set(mlx, map, (*line)[map->i], line))))))
+				&& (!(player_set(mlx, map, (*line)[map->i], line))))))
 				mlx->err = msnprt(2, "Invalid map configuration");
-			else if ((*line)[map->i++] == '2')
-				mlx->sp.num++;
+		else if ((*line)[map->i++] == '2')
+			mlx->sp.num++;
 		if (!mlx->err && another_line(map, fd, line) < 0)
 			mlx->err = msnprt(2, "Corrupt .cub file");
 	}
@@ -112,8 +112,8 @@ char	**map_builder(t_mapping *map, char c)
 
 void	mapper(t_mlx *mlx, int fd, char **line, char *gnl)
 {
-	t_mapping map;
-	
+	t_mapping	map;
+
 	map.map = NULL;
 	map.g_pig = NULL;
 	map.py_in = 0;

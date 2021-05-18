@@ -6,7 +6,7 @@
 /*   By: jpizarro <jpizarro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/08 12:30:30 by jpizarro          #+#    #+#             */
-/*   Updated: 2021/05/18 11:25:59 by jpizarro         ###   ########.fr       */
+/*   Updated: 2021/05/18 18:14:53 by jpizarro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,29 +23,29 @@
 
 void	paint_sprite(t_mlx *mlx, t_paint_sprite_tools *pst, int i)
 {
-	int x;
-	int y;
+	int	x;
+	int	y;
 
-	x = pst->ini_paint_x;
+	x = pst->ini_paint_x - 1;
 	if (!(pst->endx < 0))
-	while (x < pst->endx)
-	{	
-		if (mlx->rc.wall_dist[x] < mlx->sp.list[i].dir && x++)
-			continue;
-		pst->sp_col = (mlx->set.s1.dimx - 1)
-		* (x - pst->inix) / pst->dimx;
-		y = pst->ini_paint_y;
-		while (y < pst->endy)
-		{
-			pst->sp_row = ((mlx->set.s1.dimy - 1)
-			* (y - pst->iniy) / pst->dimy);
-			mlx->rc.color = *(unsigned*)(mlx->set.s1.addr + (pst->sp_row
-			* mlx->set.s1.dimx + pst->sp_col) * 4);
-			if (mlx->rc.color)
-				pixel_push(mlx, x, y);
-			y++;
+	{
+		while (++x < pst->endx)
+		{	
+			if (mlx->rc.wall_dist[x] < mlx->sp.list[i].dir && x++)
+				continue ;
+			pst->sp_col = (mlx->set.s1.dimx - 1)
+				* (x - pst->inix) / pst->dimx;
+			y = pst->ini_paint_y - 1;
+			while (++y < pst->endy)
+			{
+				pst->sp_row = ((mlx->set.s1.dimy - 1)
+						* (y - pst->iniy) / pst->dimy);
+				mlx->rc.color = *(unsigned *)(mlx->set.s1.addr + (pst->sp_row
+							* mlx->set.s1.dimx + pst->sp_col) * 4);
+				if (mlx->rc.color)
+					pixel_push(mlx, x, y);
+			}
 		}
-		x++;
 	}
 }
 
@@ -59,18 +59,16 @@ void	place_sprite(t_mlx *mlx, t_paint_sprite_tools *pst, int i)
 	pst->iniy = (mlx->winh - pst->dimy) / 2;
 	pst->ini_paint_y = pst->iniy * (pst->iniy > 0);
 	pst->endy = pst->iniy + pst->dimy;
-	pst->endy = pst->endy * (pst->endy <= mlx->winh) + mlx->winh * (pst->endy > mlx->winh);
+	pst->endy = pst->endy * (pst->endy <= mlx->winh)
+		+ mlx->winh * (pst->endy > mlx->winh);
 	pst->dimx = mlx->set.s1.dimx * pst->dimy / mlx->set.s1.dimy;
-	pst->posx = (1 - mlx->sp.list[i].cam / mlx->sp.list[i].dir) * (mlx->winw - 1) / 2; 
+	pst->posx = (1 - mlx->sp.list[i].cam
+			/ mlx->sp.list[i].dir) * (mlx->winw - 1) / 2;
 	pst->inix = (pst->posx - pst->dimx / 2);
-	pst->endx = pst->inix + pst->dimx; 
+	pst->endx = pst->inix + pst->dimx;
 	pst->ini_paint_x = pst->inix * (pst->inix > 0);
-	pst->endx = pst->endx * (pst->endx <= mlx->winw) + mlx->winw * (pst->endx > mlx->winw);
-	if (mlx->print_var)
-	{
-		printf("dy %f, dx %f, inix %d, inipaintx%d, endx %d, iniy %d, inipainty %d, endy%d\n", pst->dx, pst->dy, pst->inix, pst->ini_paint_x, pst->endx, pst->iniy, pst->ini_paint_y, pst->endy);
-		printf("\n");
-	}
+	pst->endx = pst->endx * (pst->endx <= mlx->winw)
+		+ mlx->winw * (pst->endx > mlx->winw);
 }
 
 /*
@@ -79,12 +77,12 @@ void	place_sprite(t_mlx *mlx, t_paint_sprite_tools *pst, int i)
 
 void	sort_sprite(t_mlx *mlx, int	i)
 {
-	int j;
-	int k;
+	int	j;
+	int	k;
 
 	j = 0;
 	while ((mlx->sp.order[j] >= 0)
-	&& (mlx->sp.list[i].dist < mlx->sp.list[mlx->sp.order[j]].dist))
+		&& (mlx->sp.list[i].dist < mlx->sp.list[mlx->sp.order[j]].dist))
 		j++;
 	k = j;
 	while (mlx->sp.order[j] >= 0)
@@ -107,11 +105,11 @@ int	base_change_to_cam_dir(t_mlx *mlx, t_paint_sprite_tools *pst, int i)
 	if (mlx->sp.list[i].dist > mlx->rc.max_dist)
 		return (2);
 	mlx->sp.list[i].dir = (mlx->rc.camx * pst->dy
-	- mlx->rc.camy * pst->dx) / pst->det;
+			- mlx->rc.camy * pst->dx) / pst->det;
 	if (mlx->sp.list[i].dir < 0)
 		return (2);
 	mlx->sp.list[i].cam = (mlx->py.dirx * pst->dy
-	- mlx->py.diry * pst->dx) / pst->det;
+			- mlx->py.diry * pst->dx) / pst->det;
 	return (0);
 }
 
@@ -122,8 +120,8 @@ int	base_change_to_cam_dir(t_mlx *mlx, t_paint_sprite_tools *pst, int i)
 void	spriter(t_mlx *mlx)
 {
 	t_paint_sprite_tools	pst;
-	int	i;
-	int	j;
+	int						i;
+	int						j;
 
 	i = -1;
 	mlx->sp.order[0] = -1;
@@ -131,7 +129,7 @@ void	spriter(t_mlx *mlx)
 	while (++i < mlx->sp.num)
 	{
 		if (base_change_to_cam_dir(mlx, &pst, i))
-			continue;
+			continue ;
 		sort_sprite(mlx, i);
 	}
 	j = -1;

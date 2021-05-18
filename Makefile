@@ -6,28 +6,21 @@
 #    By: jpizarro <jpizarro@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/03/19 11:24:00 by jpizarro          #+#    #+#              #
-#    Updated: 2021/05/18 10:54:15 by jpizarro         ###   ########.fr        #
+#    Updated: 2021/05/18 20:30:20 by jpizarro         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-.PHONY: all clean fclean re run debug
+.PHONY: all clean debug fclean re run show
 
 NAME = cub3D
 
-SRCS = $(wildcard srcs/*.c)
+SRCS =	srcs/bmp_maker.c srcs/cub3d.c srcs/dot_cub_parser.c srcs/dot_cub_parser_utils_1.c srcs/dot_cub_parser_utils_2.c srcs/eventer.c srcs/game_setup.c srcs/game_start_and_end.c srcs/mapper.c srcs/mapper_utils.c srcs/painter.c srcs/raycaster.c srcs/spriter.c srcs/utils.c
 
 OBJS = $(SRCS:.c=.o)
 
-LIBFOLDERS = $(wildcard libs/*)
-
-LIBS = $(wildcard libs/*/*.h)
+LIBS = libs/libft/libft.h libs/get_next_line/get_next_line.h
 
 STATICS = $(LIBS:.h=.a)
-
-MAKES = $(wildcard libs/*/Makefile)
-
-#STEM = $(LIBS:*/*.h=*)
-
 
 CC = gcc
 
@@ -45,35 +38,25 @@ $(NAME): $(OBJS) $(STATICS)
 	echo "$@ is ready!"
 
 %.o: %.c
-#	echo "files that need to be compiled: $?"
-#	$(CC) $(CFLAGS) -c $< -o $(<:.c=.o)
-	$(CC) -g $(CFLAGS) -c $< -o $(<:.c=.o)
-
-#$(STATICS):
-#	cd $(LIBFOLDERS) && $(MAKE)
+	$(CC) $(CFLAGS) -c $< -o $(<:.c=.o)
 
 $(STATICS):
-#	cd libs/mathft/ && $(MAKE)
 	cd libs/libft/ && $(MAKE)
-#	cd libs/color/ && $(MAKE)
 	cd libs/get_next_line/ && $(MAKE)
 
 
 clean:
 	echo "Cleaing up binary files"
 	$(RM) $(OBJS)
-#	cd libs/mathft/ && $(MAKE) $@
 	cd libs/libft/ && $(MAKE) $@
-#	cd libs/color/ && $(MAKE) $@
 	cd libs/get_next_line/ && $(MAKE) $@
 
 
 fclean: clean
-	echo "also $(NAME) and debug files"
+	echo "also $(NAME), debug and .bmp files"
 	$(RM) $(NAME) debug
-#	cd libs/mathft/ && $(MAKE) $@
+	$(RM) $(wildcard *.bmp)
 	cd libs/libft/ && $(MAKE) $@
-#	cd libs/color/ && $(MAKE) $@
 	cd libs/get_next_line/ && $(MAKE) $@
 
 re: fclean all
@@ -87,11 +70,7 @@ bmp: all
 debug: fclean $(OBJS) $(STATICS)
 	echo "Creating $@ file"
 	$(CC) -g $(MLXFLAGS) $(OBJS) $(STATICS) -o $@
-#	$(CC) -g $(CFLAGS) $(MLXFLAGS) $(OBJS) $(STATICS) -o $@
 	echo "$@ is ready!"
-
-debrun: debug
-	gdb $(NAME)
 
 show:
 	@echo "SRCS $(SRCS)"

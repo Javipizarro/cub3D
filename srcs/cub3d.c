@@ -6,7 +6,7 @@
 /*   By: jpizarro <jpizarro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/08 06:59:22 by jpizarro          #+#    #+#             */
-/*   Updated: 2021/05/17 23:24:53 by jpizarro         ###   ########.fr       */
+/*   Updated: 2021/05/18 17:48:05 by jpizarro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ int	arg_err(int argc, char **argv)
 		i++;
 	i -= 4;
 	if (!(i > 0 && argv[1][i] == '.' && argv[1][++i] == 'c'
-		&& argv[1][++i] == 'u' &&  argv[1][++i] == 'b'))
+		&& argv[1][++i] == 'u' && argv[1][++i] == 'b'))
 		return (msnprt(2, "Invalid map file"));
 	if (argc == 3 && ft_strncmp("--save", argv[2], 7))
 		return (msnprt(2, "Invalid option, try '--save' or nothing"));
@@ -50,11 +50,6 @@ int	main(int argc, char **argv)
 {
 	t_mlx	mlx;
 
-//////////
-	mlx.print_var = 0;
-	//////////
-
-
 	fresh_mlx_vars(&mlx);
 	mlx.err = arg_err(argc, argv);
 	mlx.argc = argc;
@@ -67,8 +62,5 @@ int	main(int argc, char **argv)
 	else if (!mlx.err && argc == 3)
 		bmp_of_game_ini(&mlx);
 	free_mlx(&mlx);
-/////////////
-	system("leaks cub3D");
-	////////
 	return (0);
 }

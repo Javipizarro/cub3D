@@ -6,7 +6,7 @@
 /*   By: jpizarro <jpizarro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/09 07:58:01 by jpizarro          #+#    #+#             */
-/*   Updated: 2021/05/18 12:59:25 by jpizarro         ###   ########.fr       */
+/*   Updated: 2021/05/18 18:52:15 by jpizarro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,17 +26,17 @@ void	new_player_pos(t_mlx *mlx)
 	float	dev;
 
 	mlx->py.posx += mlx->py.dirx * mlx->ctr.speed * mlx->py.advance
-	* (M_SQRT1_2 + 0.3 * (!mlx->py.sidemove));
+		* (M_SQRT1_2 + 0.3 * (!mlx->py.sidemove));
 	mlx->py.posy += mlx->py.diry * mlx->ctr.speed * mlx->py.advance
-	* (M_SQRT1_2 + 0.3 * (!mlx->py.sidemove));
+		* (M_SQRT1_2 + 0.3 * (!mlx->py.sidemove));
 	mlx->py.posx += mlx->py.diry * mlx->ctr.speed * mlx->py.sidemove
-	* (M_SQRT1_2 + 0.3 * (!mlx->py.advance));
+		* (M_SQRT1_2 + 0.3 * (!mlx->py.advance));
 	mlx->py.posy -= mlx->py.dirx * mlx->ctr.speed * mlx->py.sidemove
-	* (M_SQRT1_2 + 0.3 * (!mlx->py.advance));
+		* (M_SQRT1_2 + 0.3 * (!mlx->py.advance));
 	mlx->py.dirx = mlx->py.dirx * cos(mlx->ctr.turn * mlx->py.turn)
-	- mlx->py.diry * sin(mlx->ctr.turn * mlx->py.turn);
+		- mlx->py.diry * sin(mlx->ctr.turn * mlx->py.turn);
 	mlx->py.diry = mlx->py.dirx * sin(mlx->ctr.turn * mlx->py.turn)
-	+ mlx->py.diry * cos(mlx->ctr.turn * mlx->py.turn);
+		+ mlx->py.diry * cos(mlx->ctr.turn * mlx->py.turn);
 	dev = hypot(mlx->py.dirx, mlx->py.diry);
 	mlx->py.dirx /= dev;
 	mlx->py.diry /= dev;
@@ -58,7 +58,7 @@ int	play(t_mlx *mlx)
 	oldy = mlx->py.posy;
 	new_player_pos(mlx);
 	if (!(mlx->map.map[(int)oldy][(int)mlx->py.posx] == '0'
-	|| mlx->map.map[(int)oldy][(int)mlx->py.posx] == ' '))
+		|| mlx->map.map[(int)oldy][(int)mlx->py.posx] == ' '))
 		mlx->py.posx = oldx;
 	if (!(mlx->map.map[(int)(mlx->py.posy + 0)][(int)oldx] == '0'
 	|| mlx->map.map[(int)(mlx->py.posy + 0)][(int)oldx] == ' '))
@@ -95,10 +95,6 @@ int	key_pressed(int key, t_mlx *mlx)
 		mlx->py.turnright = 1;
 	if (key == mlx->ctr.esc)
 		game_over(mlx);
-//////////////
-	else if (key == 49)
-		mlx->print_var = 1;
-	//////////////
 	mlx->py.advance = mlx->py.moveforward - mlx->py.movebackward;
 	mlx->py.sidemove = mlx->py.moveleft - mlx->py.moveright;
 	mlx->py.turn = mlx->py.turnright - mlx->py.turnleft;
@@ -123,10 +119,6 @@ int	key_released(int key, t_mlx *mlx)
 		mlx->py.turnleft = 0;
 	if (key == mlx->ctr.turnright)
 		mlx->py.turnright = 0;
-//////////////
-	else if (key == 49)
-		mlx->print_var = 0;
-	//////////////
 	mlx->py.advance = mlx->py.moveforward - mlx->py.movebackward;
 	mlx->py.sidemove = mlx->py.moveleft - mlx->py.moveright;
 	mlx->py.turn = mlx->py.turnright - mlx->py.turnleft;
