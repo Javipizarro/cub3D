@@ -6,7 +6,7 @@
 #    By: jpizarro <jpizarro@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/03/19 11:24:00 by jpizarro          #+#    #+#              #
-#    Updated: 2021/05/18 20:30:20 by jpizarro         ###   ########.fr        #
+#    Updated: 2021/05/20 11:05:05 by jpizarro         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,7 +18,7 @@ SRCS =	srcs/bmp_maker.c srcs/cub3d.c srcs/dot_cub_parser.c srcs/dot_cub_parser_u
 
 OBJS = $(SRCS:.c=.o)
 
-LIBS = libs/libft/libft.h libs/get_next_line/get_next_line.h
+LIBS = libft/libft.h get_next_line/get_next_line.h
 
 STATICS = $(LIBS:.h=.a)
 
@@ -41,23 +41,23 @@ $(NAME): $(OBJS) $(STATICS)
 	$(CC) $(CFLAGS) -c $< -o $(<:.c=.o)
 
 $(STATICS):
-	cd libs/libft/ && $(MAKE)
-	cd libs/get_next_line/ && $(MAKE)
+	cd libft/ && $(MAKE)
+	cd get_next_line/ && $(MAKE)
 
 
 clean:
 	echo "Cleaing up binary files"
 	$(RM) $(OBJS)
-	cd libs/libft/ && $(MAKE) $@
-	cd libs/get_next_line/ && $(MAKE) $@
+	cd libft/ && $(MAKE) $@
+	cd get_next_line/ && $(MAKE) $@
 
 
 fclean: clean
 	echo "also $(NAME), debug and .bmp files"
 	$(RM) $(NAME) debug
 	$(RM) $(wildcard *.bmp)
-	cd libs/libft/ && $(MAKE) $@
-	cd libs/get_next_line/ && $(MAKE) $@
+	cd libft/ && $(MAKE) $@
+	cd get_next_line/ && $(MAKE) $@
 
 re: fclean all
 

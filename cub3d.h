@@ -6,7 +6,7 @@
 /*   By: jpizarro <jpizarro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/17 19:56:25 by jpizarro          #+#    #+#             */
-/*   Updated: 2021/05/18 21:50:40 by jpizarro         ###   ########.fr       */
+/*   Updated: 2021/05/20 11:03:36 by jpizarro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,8 @@
 # include <mlx.h>
 # include <stdio.h>
 # include <fcntl.h>
-# include "libs/libft/libft.h"
-# include "libs/get_next_line/get_next_line.h"
+# include "libft/libft.h"
+# include "get_next_line/get_next_line.h"
 # include <math.h>
 
 typedef struct s_controls
